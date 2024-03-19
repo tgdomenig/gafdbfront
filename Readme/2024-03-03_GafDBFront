@@ -1,0 +1,16 @@
+npx create-react-app gafdbfront --use-npm --template typescript
+cd gafdbfront
+
+amplify pull --appId d2m8hvaw9kuhm0 --envName gafappenv
+
+npm install aws-amplify
+npm install @azure/core-asynciterator-polyfill
+
+npm install date-fns
+npm install react-router-dom
+npm install antd --save
+
+Bemerkung
+---------
+Datastore gibt zunächst die Meldung "DataStore - Schema is not initialized. DataStore will not function as expected. This could happen if you have multiple versions of DataStore installed."
+Diese Meldung verschwindet und Datastore startet korrekt, wenn bspw. in App.tsx eine get-Funktion aufgerufen wird (z.B. findDsGenericItems("Country"))

@@ -1,0 +1,51 @@
+
+.ant-input, .ant-btn, .ant-collapse-item, .itc-row {
+  margin-bottom: 10px;
+}
+
+.itc-indented {
+  margin-left: 20px;
+}
+
+.itc-inactive-shortpost {
+  background-color: lightgray;
+}
+
+.itc-row {
+  display: flex;
+  flex-direction: 'row';
+  column-gap: 20px;
+}
+
+.itc-boxed {
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.gaf-primary-box {
+  background-color:snow;
+  border-color:"#254e5c";
+  border-width: 1px;
+  border-style: solid;
+}
+
+.gaf-secondary-box {
+  background-color:snow;
+  border-color:"#C56C4E";
+  border-width: 1px;
+  border-style: solid;
+}
+
+.blue-box {
+  background-color:snow;
+  border-color:cornflowerblue;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.json-box {
+  background-color:dimgray;
+  padding: 10px;
+  margin-bottom: 20px;
+  color: white
+}

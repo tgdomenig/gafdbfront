@@ -1,0 +1,15 @@
+{
+  "gafappenv": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-gafapp-gafappenv-141708-authRole",
+      "UnauthRoleArn": "arn:aws:iam::187533268187:role/amplify-gafapp-gafappenv-141708-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::187533268187:role/amplify-gafapp-gafappenv-141708-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-gafapp-gafappenv-141708-deployment",
+      "UnauthRoleName": "amplify-gafapp-gafappenv-141708-unauthRole",
+      "StackName": "amplify-gafapp-gafappenv-141708",
+      "StackId": "arn:aws:cloudformation:eu-central-1:187533268187:stack/amplify-gafapp-gafappenv-141708/3ab85d70-ae28-11ee-ad8b-0234883f1083",
+      "AmplifyAppId": "d2m8hvaw9kuhm0"
+    }
+  }
+}
