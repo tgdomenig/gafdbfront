@@ -10,17 +10,18 @@ import { fGetDsGenericItem, getDsGenericItem } from '../../ModelsCommon/Generic/
 
 /* ----------------------------- SAVE ----------------------- */
 export async function saveGenericItem(input: GenericItemInit) : Promise<DsGenericItem> {
-  return await DataStore.save(new DsGenericItem(input));
+  const result = await DataStore.save(new DsGenericItem(input));
+  return result;
 }
 
 
 export async function saveCountry(input: CountryInit) : Promise<DsGenericItem> {
   const {name, ...rest} = input;
-  return await saveGenericItem({category: _CATEGORY_COUNTRY_, textField: name, ...rest});
+  return await saveGenericItem({textField: name, ...rest, category: _CATEGORY_COUNTRY_});
 }
 
 export async function saveShortPost(input: GenericItemInit) : Promise<DsGenericItem> {
-  return await saveGenericItem({category: _CATEGORY_SHORT_POST_, ...input});
+  return await saveGenericItem({...input, category: _CATEGORY_SHORT_POST_});
 }
 
 export async function saveOrUpdateGenericItem(input: GenericItemInit, id?: string) : Promise<DsGenericItem> {

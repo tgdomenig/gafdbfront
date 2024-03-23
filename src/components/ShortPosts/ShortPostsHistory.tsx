@@ -13,7 +13,6 @@ export function ShortPostsHistory() {
 
   const [data, setData] = useState<ShortPost[]>([]);
 
-  stageShortPost
   useEffect(() => {
       const load = async () => {
         const newData = await xGetStagedList<DsGenericItem, ShortPost>(ENGLISH, getDSShortPosts, stageShortPost);

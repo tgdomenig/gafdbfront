@@ -10,7 +10,7 @@ import { ShortPost, ShortPostBlock, ShortPostFromJson, ShortPostModifier } from 
 import { HelpBox } from "./HelpBox";
 import { GenericItemInit } from "../../data/Datastore/ModelsWeb/Base/InitTypes";
 import { xSaveOrUpdate } from "../../data/Datastore/ModelsWeb/Base/xSaveOrUpdate";
-import { saveGenericItem } from "../../data/Datastore/ModelsWeb/Generic/GenericCUD";
+import { saveShortPost } from "../../data/Datastore/ModelsWeb/Generic/GenericCUD";
 import { ENGLISH } from "../../util/common/language";
 import { fmtDate } from "../../util/common/dateTime/Localized";
 
@@ -76,11 +76,13 @@ export function ShortPostEditor() {
       textField: {en_US: content, de_DE: content, fr_FR: content}
     };
 
+    console.log("input", input)
+
     // saves new post or updates existing one, depending on whether id is falsy
     xSaveOrUpdate<GenericItemInit, DsGenericItem>(
       getDsGenericItem,
       DsGenericItem.copyOf,
-      saveGenericItem,
+      saveShortPost,
       id,
       input
     );

@@ -26,7 +26,8 @@ export async function getDSCountries(): Promise<DsGenericItem[]> {
 
 
 export async function getDSShortPosts(): Promise<DsGenericItem[]> {
-  return await getDsGenericItems({category: _CATEGORY_SHORT_POST_});
+  const result = await getDsGenericItems({category: _CATEGORY_SHORT_POST_});
+  return result;
 }
 
 
