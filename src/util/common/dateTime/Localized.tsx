@@ -4,6 +4,10 @@ import { de, frCH, enUS } from 'date-fns/locale';
 import {GERMAN, FRENCH, ENGLISH, LANGUAGE} from '../language/Const';
 import { parseDate } from './Parse';
 
+export function fmtDateAndTime(date: Date, lg: LANGUAGE, fmt: "short" | "long") {
+  return fmtDate(date, lg, fmt) + ", " + fmtTime(date, lg);
+}
+
 export function fmtDate(date: Date | string, lg: LANGUAGE, fmt: "short" | "long" | formatDateProps) {
 
   const effFmt = fmt === "short" 
@@ -30,21 +34,6 @@ type formatDateProps = {
   year: "" | "yyyy"
 }
 
-export const formatDate = (date: Date, lg: LANGUAGE, {dayOfWeek, month, year}: formatDateProps) => {
-  let fmt, locale;
-
-  const day = dayOfWeek ? `${dayOfWeek}, dd` : "dd";
-
-  switch (lg) {
-    case GERMAN: locale = de; fmt = `${day}. ${month}${year ? " yyyy" : ""}`; break;
-    case FRENCH: locale = frCH; fmt = `${day} ${month}${year ? " yyyy" : ""}`; break;
-    default: locale = enUS; fmt = `${month} ${day}${year ? ", yyyy" : ""}`;
-  }
-
-  return format(date, fmt, {locale});
-}
-
-
 export const fmtTime = (date: Date, lg: LANGUAGE) => {
   if (! date) {
     return "UNKNOWN TIME";
@@ -58,5 +47,19 @@ export const fmtTime = (date: Date, lg: LANGUAGE) => {
   }
 
   return format(date, fmt);
+}
+
+const formatDate = (date: Date, lg: LANGUAGE, {dayOfWeek, month, year}: formatDateProps) => {
+  let fmt, locale;
+
+  const day = dayOfWeek ? `${dayOfWeek}, dd` : "dd";
+
+  switch (lg) {
+    case GERMAN: locale = de; fmt = `${day}. ${month}${year ? " yyyy" : ""}`; break;
+    case FRENCH: locale = frCH; fmt = `${day} ${month}${year ? " yyyy" : ""}`; break;
+    default: locale = enUS; fmt = `${month} ${day}${year ? ", yyyy" : ""}`;
+  }
+
+  return format(date, fmt, {locale});
 }
 

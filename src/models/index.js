@@ -2,6 +2,12 @@
 import { initSchema } from '@aws-amplify/datastore';
 import { schema } from './schema';
 
+const DsPublicationStatus = {
+  "DRAFT": "DRAFT",
+  "SUBMITTED": "SUBMITTED",
+  "PUBLISHED": "PUBLISHED"
+};
+
 const DsPostType = {
   "GENERAL": "GENERAL",
   "NEWS": "NEWS",
@@ -35,17 +41,21 @@ const DsRole = {
   "OTHER": "OTHER"
 };
 
-const { AppConfig, DsUser, DsUserFavourite, DsPost, DsPerson, DsMission, DsParticipation, DsGenericItem, DsConcours, DsConcoursPrize, DsConcoursRound, DsSession, DsMusicPiece, DsPerformance, DsConcert, DsRecording, DsMusicAlbum, DsVoting, PerformedConcert, ChosenPiece, RepertoirePiece, RecordingOnAlbum, DsPostSection, DsImage, DsLink, DsAttribute, DsMPConstituent, DsPerformedConstituent, TextField, LongTextField, IntegerRange, DsConcertPerformer, DsVote } = initSchema(schema);
+const VideoPlatform = {
+  "YOUTUBE": "YOUTUBE",
+  "VIMEO": "VIMEO"
+};
+
+const { ConfigItem, DsPost, DsPerson, DsMission, DsParticipation, DsGenericItem, DsShortPost, DsConcours, DsConcoursPrize, DsConcoursRound, DsSession, DsMusicPiece, DsPerformance, DsConcert, DsRecording, DsMusicAlbum, DsNotificationRecipient, DsVoting, DsVote, PerformedConcert, ChosenPiece, RepertoirePiece, RecordingOnAlbum, DsPostSection, DsImage, DsLink, DsAttribute, DsMPConstituent, DsPerformedConstituent, VideoLink, TextField, LongTextField, IntegerRange, DsConcertPerformer } = initSchema(schema);
 
 export {
-  AppConfig,
-  DsUser,
-  DsUserFavourite,
+  ConfigItem,
   DsPost,
   DsPerson,
   DsMission,
   DsParticipation,
   DsGenericItem,
+  DsShortPost,
   DsConcours,
   DsConcoursPrize,
   DsConcoursRound,
@@ -55,24 +65,28 @@ export {
   DsConcert,
   DsRecording,
   DsMusicAlbum,
+  DsNotificationRecipient,
   DsVoting,
+  DsVote,
   PerformedConcert,
   ChosenPiece,
   RepertoirePiece,
   RecordingOnAlbum,
+  DsPublicationStatus,
   DsPostType,
   DsLayoutVariant,
   DsLinkVariant,
   DsRole,
+  VideoPlatform,
   DsPostSection,
   DsImage,
   DsLink,
   DsAttribute,
   DsMPConstituent,
   DsPerformedConstituent,
+  VideoLink,
   TextField,
   LongTextField,
   IntegerRange,
-  DsConcertPerformer,
-  DsVote
+  DsConcertPerformer
 };

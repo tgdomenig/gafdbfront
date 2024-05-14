@@ -3,7 +3,8 @@ import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 import '@azure/core-asynciterator-polyfill';
 
 import { DsGenericItem } from '../../../../models';
-import { _CATEGORY_COUNTRY_, _CATEGORY_SHORT_POST_ } from './ShortPostTypes';
+
+export const _CATEGORY_COUNTRY_ = "Country";
 
 /* ----------------------------- GET DS ----------------------- */
 export type getDsGenericItemsProps = {
@@ -22,12 +23,6 @@ export async function getDsGenericItems(props?: getDsGenericItemsProps) : Promis
 
 export async function getDSCountries(): Promise<DsGenericItem[]> {
   return await getDsGenericItems({category: _CATEGORY_COUNTRY_});
-}
-
-
-export async function getDSShortPosts(): Promise<DsGenericItem[]> {
-  const result = await getDsGenericItems({category: _CATEGORY_SHORT_POST_});
-  return result;
 }
 
 

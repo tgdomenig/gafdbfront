@@ -1,6 +1,9 @@
 
-import { lgLookup } from './Lookup';
-import { LANGUAGE, ENGLISH, FRENCH, GERMAN } from './Const';
+import { ENGLISH, FRENCH, GERMAN } from './Const';
+import type { LANGUAGE } from './Const';
 
-export { ENGLISH, FRENCH, GERMAN, lgLookup };
-export type { LANGUAGE };
+import { lgLookup, lgLookup1, lgLookup2 } from './Lookup';
+import type { LgLookup, LgLookup1, LgLookup2 } from './Lookup';
+
+
+export { LANGUAGE, ENGLISH, FRENCH, GERMAN, lgLookup, lgLookup1, lgLookup2, LgLookup, LgLookup1, LgLookup2 };

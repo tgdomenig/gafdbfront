@@ -4,9 +4,8 @@ import '@azure/core-asynciterator-polyfill';
 
 import { DsGenericItem } from '../../../../models';
 import { CountryInit, GenericItemInit } from '../Base/InitTypes';
-import { _CATEGORY_COUNTRY_, _CATEGORY_SHORT_POST_ } from '../../ModelsCommon/Generic/ShortPostTypes';
 import { xSaveOrUpdate } from '../Base/xSaveOrUpdate';
-import { fGetDsGenericItem, getDsGenericItem } from '../../ModelsCommon/Generic/GenericR';
+import { _CATEGORY_COUNTRY_, fGetDsGenericItem, getDsGenericItem } from '../../ModelsCommon/Generic/GenericR';
 
 /* ----------------------------- SAVE ----------------------- */
 export async function saveGenericItem(input: GenericItemInit) : Promise<DsGenericItem> {
@@ -14,14 +13,9 @@ export async function saveGenericItem(input: GenericItemInit) : Promise<DsGeneri
   return result;
 }
 
-
 export async function saveCountry(input: CountryInit) : Promise<DsGenericItem> {
   const {name, ...rest} = input;
   return await saveGenericItem({textField: name, ...rest, category: _CATEGORY_COUNTRY_});
-}
-
-export async function saveShortPost(input: GenericItemInit) : Promise<DsGenericItem> {
-  return await saveGenericItem({...input, category: _CATEGORY_SHORT_POST_});
 }
 
 export async function saveOrUpdateGenericItem(input: GenericItemInit, id?: string) : Promise<DsGenericItem> {

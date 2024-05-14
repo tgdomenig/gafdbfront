@@ -1,42 +1,50 @@
 import { useEffect, useState } from "react";
-import { Button, Checkbox, Input, Modal } from "antd";
+import { Button, Checkbox, Input, Modal, Radio, Select } from "antd";
 
 import './ShortPosts.css'
 import { PageTitle, SubSubTitle } from "../Base/Base";
 import { useLocation } from "react-router-dom";
-import { DsGenericItem } from "../../models";
-import { getDsGenericItem } from "../../data/Datastore/ModelsCommon/Generic/GenericR";
-import { ShortPost, ShortPostBlock, ShortPostFromJson, ShortPostModifier } from "../../data/Datastore/ModelsCommon/Generic/ShortPostTypes";
+import { DsShortPost } from "../../models";
+import { ShortPost, ShortPostBlock, ShortPostModifier } from "../../data/Datastore/ModelsCommon/ShortPost/ShortPostTypes";
 import { HelpBox } from "./HelpBox";
-import { GenericItemInit } from "../../data/Datastore/ModelsWeb/Base/InitTypes";
+import { ShortPostInit } from "../../data/Datastore/ModelsWeb/Base/InitTypes";
 import { xSaveOrUpdate } from "../../data/Datastore/ModelsWeb/Base/xSaveOrUpdate";
-import { saveShortPost } from "../../data/Datastore/ModelsWeb/Generic/GenericCUD";
+import { saveShortPost } from "../../data/Datastore/ModelsWeb/ShortPost/ShortPostCUD";
 import { ENGLISH } from "../../util/common/language";
 import { fmtDate } from "../../util/common/dateTime/Localized";
+import { getDSShortPost, stageShortPost } from "../../data/Datastore/ModelsCommon/ShortPost/ShortPosts";
+import { xGetStaged } from "../../data/Datastore/ModelsCommon/Base/xGetStaged";
+import { DsPublicationStatus } from "../../models";
+import { format, set } from "date-fns";
+import { itcAssert } from "../../util/common/general/tests";
 
+const publicationStatusLookup = new Map<string, DsPublicationStatus>([
+  ["Draft", DsPublicationStatus.DRAFT],
+  ["Publish upon notification", DsPublicationStatus.SUBMITTED],
+  ["Publish silently", DsPublicationStatus.PUBLISHED]
+])
 
 export function ShortPostEditor() {
 
   const { state } = useLocation();
   const { id } = state || { id: "" };
-  const mode = id ? "Update" : "Create";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [dbPost, setDbPost] = useState<DsGenericItem|undefined>(undefined);
+  const [shortPost, setShortPost] = useState<ShortPost|undefined>(undefined);
 
   useEffect(() => {
       const load = async () => {
-        const post = await getDsGenericItem(id);
+        const post = await xGetStaged(
+              ENGLISH,
+              getDSShortPost,
+              id,
+              stageShortPost
+        );
         if (post) { 
-          setDbPost(post);
-          setActive(post.isActive || false);
-          const content = post.textField?.en_US;
-          if (content) {
-            const { title: title0, blocks } = JSON.parse(content) as ShortPostFromJson;
-            setTitle(title0);
-            setBody(formatShortPostBody(blocks));
-          }
+          setShortPost(post);
+          setTitle(post.title);
+          setBody(formatShortPostBody(post.blocks));
         }  
       }
       if (id) { load() };
@@ -44,7 +52,7 @@ export function ShortPostEditor() {
     [id]
   );
 
-  const [isActive, setActive] = useState<boolean>(true);
+  const [publicationStatus, setPublicationstatus] = useState<string>("Publish upon notification");
   const [title, setTitle] = useState<string>('');
   const [body, setBody] = useState<string>('');
 
@@ -60,28 +68,37 @@ export function ShortPostEditor() {
 
   const savePost = () => {
     const pDate = new Date(); // current time is used as publish date
-    const pDateStr = pDate.toISOString();
 
-    const displayId = dbPost ? dbPost.displayId : pDateStr + " / " + title;
+    /*
+    Bemerkung:
+    Leider ist das Feld PublishDate in der DB vom Typ AWSDate statt AWSDateTime. 
+    Die Nachrichten sollten aber auf DateTime sortiert werden.
+    Die lassen die DB Struktur vorläufig unverändert und fügen statt dessen das Publikationsdatum inkl. Zeit zur DisplayId hinzu.
+    */
+    const pDateStr = format(pDate, 'yyyy-MM-dd');
+    const pDateTimeStr = format(pDate, 'yyyy-MM-dd HH:mm:ss');
+
+    const publicationStatusDS = publicationStatusLookup.get(publicationStatus) as DsPublicationStatus;
+
+    const displayId = shortPost ? shortPost.displayId : pDateTimeStr + " / " + title;
 
     const content = JSON.stringify({
-      publishDate: pDateStr,
       title,
       blocks: parseShortPostBody(body)
     });
 
     const input = {
       displayId,
-      isActive,
+      publishDate: pDateStr,
+      publicationStatus: DsPublicationStatus[publicationStatusDS],
+      category: "ConcoursNews",
       textField: {en_US: content, de_DE: content, fr_FR: content}
     };
 
-    console.log("input", input)
-
     // saves new post or updates existing one, depending on whether id is falsy
-    xSaveOrUpdate<GenericItemInit, DsGenericItem>(
-      getDsGenericItem,
-      DsGenericItem.copyOf,
+    xSaveOrUpdate<ShortPostInit, DsShortPost>(
+      getDSShortPost,
+      DsShortPost.copyOf,
       saveShortPost,
       id,
       input
@@ -111,9 +128,7 @@ export function ShortPostEditor() {
       <HelpBox />
 
       <div className="itc-boxed gaf-secondary-box">
-
-        <Checkbox value={isActive} onChange={() => { setActive(! isActive); }}>Post is active</Checkbox>;
-
+        
         <SubSubTitle title="Title" />
         <Input 
             value={title}
@@ -128,7 +143,18 @@ export function ShortPostEditor() {
             placeholder="body"
             autoSize={{ minRows: 8 }}
         />
-        
+
+        {/* <SubSubTitle title="Publication Status" />
+
+        <Select
+          style={{width: 240}}
+          defaultValue={publicationStatus}
+          onChange={(v) => { setPublicationstatus(v); }}
+          options={Array.from(publicationStatusLookup.keys()).map(
+            key => ({value: key, label: key}))
+          }
+        /> */}
+
       </div>
 
       <SubSubTitle title="Parsed object:" />
@@ -154,7 +180,7 @@ export function ShortPostEditor() {
 
           title="Confirm Save Post" 
           open={isModalOpen} 
-          onOk={() => { savePost(); setIsModalOpen(false); }} 
+          onOk={() => { savePost(); setIsModalOpen(false); }}
           onCancel={ () => setIsModalOpen(false) }>
         <pre className={"json-box"}>{toJson(true)}</pre>
       </Modal>
@@ -162,14 +188,6 @@ export function ShortPostEditor() {
 
   );
 };
-
-
-
-// function ShortPosts() {
-//   return(
-//     <ShortPostEditor />
-//   );
-// }
 
 function parseShortPostBody(text: string) : ShortPostBlock[] {
 
@@ -195,15 +213,15 @@ function parseShortPostBodyParagraph(paragraph: string) : ShortPostBlock[] {
     if (line) { // ignore empty lines
       if (line.startsWith("b:")) {
         modifier = "b";
-        line = line.substring(2).trim();
+        line = JSON.stringify(line.substring(2).trim());
       }
       else if (line.startsWith("vl:")) {
         modifier = "vl";
-        line = line.substring(3).trim();
+        line = _getJSONReady(line.substring(3).trim(), ['platform', 'videoId', 'startTimeInSeconds']);
       }
       else if (line.startsWith("wl:")) {
         modifier = "wl";
-        line = line.substring(3).trim();
+        line = _getJSONReady(line.substring(3).trim(), ['label', 'url']);
       }
       else {
         modifier = "txt";
@@ -248,6 +266,35 @@ export function RShortPost({post}: {post: ShortPost}) {
     </div>
   )
 }
+
+export function _getJSONReady(s: string, keys: string[]) {
+  let result = s;
+  for (let key of keys) {
+    result = result.replace(key, `\"${key}\"`);
+  }
+  return result;
+}
+
+/* NEW EXAMPLE:
+
+This is the first paragraph of our example.
+
+Here comes the second paragraph. It includes some bullets:
+b: namely this one
+b: and a second one.
+
+The next paragraph then includes a video link:
+vl: {platform: "YOUTUBE", videoId: "8z5HkP_N8WY", startTimeInSeconds: 120}
+and a Web link:
+wl: {label: "Visit Géza Anda Homepage, url: "https://geza-anda.ch/}
+
+This fourth paragraph concludes our example.
+
+*/
+
+
+
+
 
 /*
 function parseShortPostBody_COPY(text: string) : ShortPostBlock[] {

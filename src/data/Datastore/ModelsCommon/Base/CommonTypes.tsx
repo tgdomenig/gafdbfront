@@ -24,7 +24,8 @@ export type GafPostMeta = {
   subcategory?: string | null,
   tags?: string[] | null,
   publishDate?: string | null,
-  sort?: number | null
+  sort?: number | null,
+  updatedAt: string
 }
 
 export type GafPostBase = {
@@ -40,7 +41,8 @@ export type PersonCoreFields = {
   yearOfBirth?: string,
   profileImage?: GafImage,
   isUnderGafManagement?: boolean,
-  gafManagementSort?: number
+  gafManagementSort?: number,
+  updatedAt: string
 }
 
 export type HyperText = HyperTextPart[];

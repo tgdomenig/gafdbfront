@@ -1,6 +1,12 @@
 import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier, CustomIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
+
+export enum DsPublicationStatus {
+  DRAFT = "DRAFT",
+  SUBMITTED = "SUBMITTED",
+  PUBLISHED = "PUBLISHED"
+}
 
 export enum DsPostType {
   GENERAL = "GENERAL",
@@ -33,6 +39,11 @@ export enum DsRole {
   SCREENING_JURY = "SCREENING_JURY",
   CONDUCTOR = "CONDUCTOR",
   OTHER = "OTHER"
+}
+
+export enum VideoPlatform {
+  YOUTUBE = "YOUTUBE",
+  VIMEO = "VIMEO"
 }
 
 type EagerDsPostSection = {
@@ -119,17 +130,33 @@ export declare const DsMPConstituent: (new (init: ModelInit<DsMPConstituent>) =>
 
 type EagerDsPerformedConstituent = {
   readonly displayId: string;
-  readonly link?: string | null;
+  readonly videoLink?: VideoLink | null;
 }
 
 type LazyDsPerformedConstituent = {
   readonly displayId: string;
-  readonly link?: string | null;
+  readonly videoLink?: VideoLink | null;
 }
 
 export declare type DsPerformedConstituent = LazyLoading extends LazyLoadingDisabled ? EagerDsPerformedConstituent : LazyDsPerformedConstituent
 
 export declare const DsPerformedConstituent: (new (init: ModelInit<DsPerformedConstituent>) => DsPerformedConstituent)
+
+type EagerVideoLink = {
+  readonly platform?: VideoPlatform | keyof typeof VideoPlatform | null;
+  readonly videoId?: string | null;
+  readonly startTimeInSeconds?: number | null;
+}
+
+type LazyVideoLink = {
+  readonly platform?: VideoPlatform | keyof typeof VideoPlatform | null;
+  readonly videoId?: string | null;
+  readonly startTimeInSeconds?: number | null;
+}
+
+export declare type VideoLink = LazyLoading extends LazyLoadingDisabled ? EagerVideoLink : LazyVideoLink
+
+export declare const VideoLink: (new (init: ModelInit<VideoLink>) => VideoLink)
 
 type EagerTextField = {
   readonly en_US: string;
@@ -191,126 +218,34 @@ export declare type DsConcertPerformer = LazyLoading extends LazyLoadingDisabled
 
 export declare const DsConcertPerformer: (new (init: ModelInit<DsConcertPerformer>) => DsConcertPerformer)
 
-type EagerDsVote = {
-  readonly votingId: string;
-  readonly choice: string;
-}
-
-type LazyDsVote = {
-  readonly votingId: string;
-  readonly choice: string;
-}
-
-export declare type DsVote = LazyLoading extends LazyLoadingDisabled ? EagerDsVote : LazyDsVote
-
-export declare const DsVote: (new (init: ModelInit<DsVote>) => DsVote)
-
-type EagerAppConfig = {
+type EagerConfigItem = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<AppConfig, 'id'>;
+    identifier: ManagedIdentifier<ConfigItem, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly displayId: string;
-  readonly CurrentConcoursShow?: string | null;
-  readonly CurrentHomeScreen?: string | null;
-  readonly ConcoursLiveStreamLink?: string | null;
-  readonly ConcoursCurrentRound?: string | null;
-  readonly ConcoursCurrentSession?: string | null;
+  readonly displayId?: string | null;
+  readonly data?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-type LazyAppConfig = {
+type LazyConfigItem = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<AppConfig, 'id'>;
+    identifier: ManagedIdentifier<ConfigItem, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly displayId: string;
-  readonly CurrentConcoursShow?: string | null;
-  readonly CurrentHomeScreen?: string | null;
-  readonly ConcoursLiveStreamLink?: string | null;
-  readonly ConcoursCurrentRound?: string | null;
-  readonly ConcoursCurrentSession?: string | null;
+  readonly displayId?: string | null;
+  readonly data?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-export declare type AppConfig = LazyLoading extends LazyLoadingDisabled ? EagerAppConfig : LazyAppConfig
+export declare type ConfigItem = LazyLoading extends LazyLoadingDisabled ? EagerConfigItem : LazyConfigItem
 
-export declare const AppConfig: (new (init: ModelInit<AppConfig>) => AppConfig) & {
-  copyOf(source: AppConfig, mutator: (draft: MutableModel<AppConfig>) => MutableModel<AppConfig> | void): AppConfig;
-}
-
-type EagerDsUser = {
-  readonly [__modelMeta__]: {
-    identifier: CustomIdentifier<DsUser, 'deviceId'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly deviceId: string;
-  readonly notificationPushToken?: string | null;
-  readonly favourites?: DsUserFavourite[] | null;
-  readonly language?: string | null;
-  readonly votes?: DsVote[] | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyDsUser = {
-  readonly [__modelMeta__]: {
-    identifier: CustomIdentifier<DsUser, 'deviceId'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly deviceId: string;
-  readonly notificationPushToken?: string | null;
-  readonly favourites: AsyncCollection<DsUserFavourite>;
-  readonly language?: string | null;
-  readonly votes?: DsVote[] | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type DsUser = LazyLoading extends LazyLoadingDisabled ? EagerDsUser : LazyDsUser
-
-export declare const DsUser: (new (init: ModelInit<DsUser>) => DsUser) & {
-  copyOf(source: DsUser, mutator: (draft: MutableModel<DsUser>) => MutableModel<DsUser> | void): DsUser;
-}
-
-type EagerDsUserFavourite = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<DsUserFavourite, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly userId?: string | null;
-  readonly artistId?: string | null;
-  readonly isActive?: boolean | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-  readonly dsUserFavouritesDeviceId?: string | null;
-  readonly dsPersonFansId?: string | null;
-}
-
-type LazyDsUserFavourite = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<DsUserFavourite, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly userId?: string | null;
-  readonly artistId?: string | null;
-  readonly isActive?: boolean | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-  readonly dsUserFavouritesDeviceId?: string | null;
-  readonly dsPersonFansId?: string | null;
-}
-
-export declare type DsUserFavourite = LazyLoading extends LazyLoadingDisabled ? EagerDsUserFavourite : LazyDsUserFavourite
-
-export declare const DsUserFavourite: (new (init: ModelInit<DsUserFavourite>) => DsUserFavourite) & {
-  copyOf(source: DsUserFavourite, mutator: (draft: MutableModel<DsUserFavourite>) => MutableModel<DsUserFavourite> | void): DsUserFavourite;
+export declare const ConfigItem: (new (init: ModelInit<ConfigItem>) => ConfigItem) & {
+  copyOf(source: ConfigItem, mutator: (draft: MutableModel<ConfigItem>) => MutableModel<ConfigItem> | void): ConfigItem;
 }
 
 type EagerDsPost = {
@@ -320,6 +255,7 @@ type EagerDsPost = {
   };
   readonly id: string;
   readonly postType?: DsPostType | keyof typeof DsPostType | null;
+  readonly publicationStatus?: DsPublicationStatus | keyof typeof DsPublicationStatus | null;
   readonly publishDate?: string | null;
   readonly displayId: string;
   readonly title: TextField;
@@ -341,6 +277,7 @@ type LazyDsPost = {
   };
   readonly id: string;
   readonly postType?: DsPostType | keyof typeof DsPostType | null;
+  readonly publicationStatus?: DsPublicationStatus | keyof typeof DsPublicationStatus | null;
   readonly publishDate?: string | null;
   readonly displayId: string;
   readonly title: TextField;
@@ -376,7 +313,6 @@ type EagerDsPerson = {
   readonly isUnderGafManagement?: boolean | null;
   readonly concerts?: PerformedConcert[] | null;
   readonly missions?: DsMission[] | null;
-  readonly fans?: DsUserFavourite[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly dsPersonOriginId?: string | null;
@@ -397,7 +333,6 @@ type LazyDsPerson = {
   readonly isUnderGafManagement?: boolean | null;
   readonly concerts: AsyncCollection<PerformedConcert>;
   readonly missions: AsyncCollection<DsMission>;
-  readonly fans: AsyncCollection<DsUserFavourite>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly dsPersonOriginId?: string | null;
@@ -415,6 +350,7 @@ type EagerDsMission = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly displayId: string;
   readonly yearOfConcours: string;
   readonly personId: string;
   readonly concoursId: string;
@@ -433,6 +369,7 @@ type LazyDsMission = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly displayId: string;
   readonly yearOfConcours: string;
   readonly personId: string;
   readonly concoursId: string;
@@ -457,9 +394,9 @@ type EagerDsParticipation = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly displayId: string;
   readonly missionId: string;
   readonly concoursRoundId: string;
-  readonly sessionId?: string | null;
   readonly admittedToCompete?: boolean | null;
   readonly chosenRepertoire?: ChosenPiece[] | null;
   readonly performances?: DsPerformance[] | null;
@@ -474,9 +411,9 @@ type LazyDsParticipation = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly displayId: string;
   readonly missionId: string;
   readonly concoursRoundId: string;
-  readonly sessionId?: string | null;
   readonly admittedToCompete?: boolean | null;
   readonly chosenRepertoire: AsyncCollection<ChosenPiece>;
   readonly performances: AsyncCollection<DsPerformance>;
@@ -501,7 +438,6 @@ type EagerDsGenericItem = {
   readonly category?: string | null;
   readonly textField?: TextField | null;
   readonly longTextField?: LongTextField | null;
-  readonly isActive?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -516,7 +452,6 @@ type LazyDsGenericItem = {
   readonly category?: string | null;
   readonly textField?: TextField | null;
   readonly longTextField?: LongTextField | null;
-  readonly isActive?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -525,6 +460,42 @@ export declare type DsGenericItem = LazyLoading extends LazyLoadingDisabled ? Ea
 
 export declare const DsGenericItem: (new (init: ModelInit<DsGenericItem>) => DsGenericItem) & {
   copyOf(source: DsGenericItem, mutator: (draft: MutableModel<DsGenericItem>) => MutableModel<DsGenericItem> | void): DsGenericItem;
+}
+
+type EagerDsShortPost = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<DsShortPost, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly publicationStatus?: DsPublicationStatus | keyof typeof DsPublicationStatus | null;
+  readonly publishDate?: string | null;
+  readonly displayId: string;
+  readonly category?: string | null;
+  readonly textField?: TextField | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyDsShortPost = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<DsShortPost, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly publicationStatus?: DsPublicationStatus | keyof typeof DsPublicationStatus | null;
+  readonly publishDate?: string | null;
+  readonly displayId: string;
+  readonly category?: string | null;
+  readonly textField?: TextField | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type DsShortPost = LazyLoading extends LazyLoadingDisabled ? EagerDsShortPost : LazyDsShortPost
+
+export declare const DsShortPost: (new (init: ModelInit<DsShortPost>) => DsShortPost) & {
+  copyOf(source: DsShortPost, mutator: (draft: MutableModel<DsShortPost>) => MutableModel<DsShortPost> | void): DsShortPost;
 }
 
 type EagerDsConcours = {
@@ -649,12 +620,13 @@ type EagerDsSession = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly displayId: string;
   readonly sessionName: string;
   readonly date?: string | null;
   readonly start?: string | null;
   readonly end?: string | null;
   readonly concoursRoundId?: string | null;
-  readonly competitors?: DsParticipation[] | null;
+  readonly competitors?: string[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -665,12 +637,13 @@ type LazyDsSession = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly displayId: string;
   readonly sessionName: string;
   readonly date?: string | null;
   readonly start?: string | null;
   readonly end?: string | null;
   readonly concoursRoundId?: string | null;
-  readonly competitors: AsyncCollection<DsParticipation>;
+  readonly competitors?: string[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -733,8 +706,9 @@ type EagerDsPerformance = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly displayId?: string | null;
   readonly musicPieceId: string;
-  readonly link?: string | null;
+  readonly videoLink?: VideoLink | null;
   readonly constituents?: DsPerformedConstituent[] | null;
   readonly playedBy: string;
   readonly createdAt?: string | null;
@@ -749,8 +723,9 @@ type LazyDsPerformance = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly displayId?: string | null;
   readonly musicPieceId: string;
-  readonly link?: string | null;
+  readonly videoLink?: VideoLink | null;
   readonly constituents?: DsPerformedConstituent[] | null;
   readonly playedBy: string;
   readonly createdAt?: string | null;
@@ -773,6 +748,8 @@ type EagerDsConcert = {
   readonly id: string;
   readonly wpId: string;
   readonly displayId: string;
+  readonly publicationStatus?: DsPublicationStatus | keyof typeof DsPublicationStatus | null;
+  readonly publishDate?: string | null;
   readonly title?: string | null;
   readonly titleFreetext?: TextField | null;
   readonly managedArtists?: PerformedConcert[] | null;
@@ -804,6 +781,8 @@ type LazyDsConcert = {
   readonly id: string;
   readonly wpId: string;
   readonly displayId: string;
+  readonly publicationStatus?: DsPublicationStatus | keyof typeof DsPublicationStatus | null;
+  readonly publishDate?: string | null;
   readonly title?: string | null;
   readonly titleFreetext?: TextField | null;
   readonly managedArtists: AsyncCollection<PerformedConcert>;
@@ -917,6 +896,36 @@ export declare const DsMusicAlbum: (new (init: ModelInit<DsMusicAlbum>) => DsMus
   copyOf(source: DsMusicAlbum, mutator: (draft: MutableModel<DsMusicAlbum>) => MutableModel<DsMusicAlbum> | void): DsMusicAlbum;
 }
 
+type EagerDsNotificationRecipient = {
+  readonly [__modelMeta__]: {
+    identifier: CustomIdentifier<DsNotificationRecipient, 'notificationPushToken'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly notificationPushToken: string;
+  readonly favourites?: string[] | null;
+  readonly language?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyDsNotificationRecipient = {
+  readonly [__modelMeta__]: {
+    identifier: CustomIdentifier<DsNotificationRecipient, 'notificationPushToken'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly notificationPushToken: string;
+  readonly favourites?: string[] | null;
+  readonly language?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type DsNotificationRecipient = LazyLoading extends LazyLoadingDisabled ? EagerDsNotificationRecipient : LazyDsNotificationRecipient
+
+export declare const DsNotificationRecipient: (new (init: ModelInit<DsNotificationRecipient>) => DsNotificationRecipient) & {
+  copyOf(source: DsNotificationRecipient, mutator: (draft: MutableModel<DsNotificationRecipient>) => MutableModel<DsNotificationRecipient> | void): DsNotificationRecipient;
+}
+
 type EagerDsVoting = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<DsVoting, 'id'>;
@@ -930,6 +939,7 @@ type EagerDsVoting = {
   readonly choices?: TextField[] | null;
   readonly starts?: string | null;
   readonly terminates?: string | null;
+  readonly votes?: DsVote[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -947,6 +957,7 @@ type LazyDsVoting = {
   readonly choices?: TextField[] | null;
   readonly starts?: string | null;
   readonly terminates?: string | null;
+  readonly votes: AsyncCollection<DsVote>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -955,6 +966,38 @@ export declare type DsVoting = LazyLoading extends LazyLoadingDisabled ? EagerDs
 
 export declare const DsVoting: (new (init: ModelInit<DsVoting>) => DsVoting) & {
   copyOf(source: DsVoting, mutator: (draft: MutableModel<DsVoting>) => MutableModel<DsVoting> | void): DsVoting;
+}
+
+type EagerDsVote = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<DsVote, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly votingId: string;
+  readonly choice?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+  readonly dsVotingVotesId?: string | null;
+}
+
+type LazyDsVote = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<DsVote, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly votingId: string;
+  readonly choice?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+  readonly dsVotingVotesId?: string | null;
+}
+
+export declare type DsVote = LazyLoading extends LazyLoadingDisabled ? EagerDsVote : LazyDsVote
+
+export declare const DsVote: (new (init: ModelInit<DsVote>) => DsVote) & {
+  copyOf(source: DsVote, mutator: (draft: MutableModel<DsVote>) => MutableModel<DsVote> | void): DsVote;
 }
 
 type EagerPerformedConcert = {

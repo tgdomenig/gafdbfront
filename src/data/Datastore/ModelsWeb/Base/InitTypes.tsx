@@ -1,3 +1,4 @@
+import { DsPublicationStatus } from "../../../../models"
 import { MediaVariantType } from "../../ModelsCommon/Base/CommonTypes"
 
 export type CountryInit = {
@@ -10,6 +11,14 @@ export type GenericItemInit = {
   category?: string,
   textField?: TextInit,
   longTextField?: LongTextInit
+}
+
+export type ShortPostInit = {
+  displayId: string,
+  category: string,
+  publishDate: string,
+  publicationStatus: DsPublicationStatus,
+  textField?: TextInit
 }
 
 export type GafLinkInit = {

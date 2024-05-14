@@ -6,6 +6,11 @@ export interface Displayable {
   displayId: string
 }
 
+export interface CommonType {
+  id: string
+  displayId: string
+}
+
 type compareCollectionsArgs<S, T> = {
   collection1: S[], 
   collection2: T[], 

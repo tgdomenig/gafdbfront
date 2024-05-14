@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { DsGenericItem } from "../../models";
-//import { ENGLISH } from "../../util/common/language/Const";
+import { DsShortPost } from "../../models";
 import { PageTitle } from "../Base/Base";
-import { ShortPost } from "../../data/Datastore/ModelsCommon/Generic/ShortPostTypes";
+import { ShortPost } from "../../data/Datastore/ModelsCommon/ShortPost/ShortPostTypes";
 import { xGetStagedList } from "../../data/Datastore/ModelsCommon/Base/xGetStaged";
-import { stageShortPost } from "../../data/Datastore/ModelsCommon/Generic/ShortPosts";
+import { getDSShortPosts, stageShortPost } from "../../data/Datastore/ModelsCommon/ShortPost/ShortPosts";
 import { RShortPost } from "./RShortPost";
-import { getDSShortPosts } from "../../data/Datastore/ModelsCommon/Generic/GenericR";
 import { ENGLISH } from "../../util/common/language";
 
 export function ShortPostsHistory() {
@@ -15,7 +13,7 @@ export function ShortPostsHistory() {
 
   useEffect(() => {
       const load = async () => {
-        const newData = await xGetStagedList<DsGenericItem, ShortPost>(ENGLISH, getDSShortPosts, stageShortPost);
+        const newData = await xGetStagedList<DsShortPost, ShortPost>(ENGLISH, getDSShortPosts, stageShortPost);
         if (newData) { setData(newData); }
       }
       load();
@@ -24,8 +22,6 @@ export function ShortPostsHistory() {
 
   return(
       <div>
-        <PageTitle title="Short Posts Currently in DB" />
-
         <div>
           {data.map((post: ShortPost) => {
             return <RShortPost post={post} />

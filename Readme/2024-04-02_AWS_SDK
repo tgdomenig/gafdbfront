@@ -1,0 +1,29 @@
+
+// installation:
+
+npm install @aws-sdk/client-lambda
+
+
+see https://www.udemy.com/course/draft/2102800/learn/lecture/13093832#overview
+
+amplify add api
+> Rest
+    > friendly name: 
+    > path
+    > another friendly name: (e.g. same as above)
+    > CRUD function or express function (in our case: CRUD)
+
+
+SCHRITTE:
+
+(*)
+Neue Lambda Funktion via "amplify add api" erzeugen, siehe Udemy: https://www.udemy.com/course/draft/2102800/learn/lecture/13093832#overview
+
+(*)
+expo-server-sdk installieren und lambda-Funktion implementieren, siehe https://github.com/expo/expo-server-sdk-node
+Teste mit Test-Notifikation
+
+(*)
+AWS so konfigurieren, dass nach 15 Minuten die Receipts geholt werden. Diese parsen und Ergebnis in DB schreiben.
+Allenfalls unregistrierte PushTokens löschen
+

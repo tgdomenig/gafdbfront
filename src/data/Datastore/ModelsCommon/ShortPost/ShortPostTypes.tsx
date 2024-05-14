@@ -1,6 +1,4 @@
-export const _CATEGORY_COUNTRY_ = "Short Post";
-export const _CATEGORY_SHORT_POST_ = "Short Post";
-export const _CATEGORY_EXPIRED_SHORT_POST_ = "Expired Short Post";
+import { DsPublicationStatus } from "../../../../models";
 
 export type ShortPostModifier = "txt" | "b" | "vl" | "wl";
 
@@ -12,8 +10,9 @@ export type ShortPostBlock = {
 
 export type ShortPost = {
   id: string
-  isActive: boolean
   displayId: string
+  category: string
+  publicationStatus?: DsPublicationStatus
   publishDate: Date
   title: string
   blocks: ShortPostBlock[]

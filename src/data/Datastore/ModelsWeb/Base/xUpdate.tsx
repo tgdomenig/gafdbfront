@@ -1,6 +1,7 @@
 import { DataStore, MutableModel } from '@aws-amplify/datastore';
 import { Displayable } from './Displayable';
 import { xGet } from './xGet';
+import { itcAssert, itcLog } from '../../../../util/common/general/tests';
 
 export async function xUpdate<S extends Displayable, T extends Displayable>(
     getter: (idOrDisplayId: string) => Promise<T|undefined>,
@@ -8,7 +9,7 @@ export async function xUpdate<S extends Displayable, T extends Displayable>(
     idOrDisplayId: string,
     input: Partial<S>,
     newDisplayId?: string
-  ) {
+  )  : Promise<T|undefined> {
     const {...rest} = input;
     let original = await xGet<T>(getter, idOrDisplayId);
 
@@ -26,6 +27,7 @@ export async function xUpdate<S extends Displayable, T extends Displayable>(
           }
         }
       ));
+      itcLog("xUpdate", original, result)
       return result;
     }
 }

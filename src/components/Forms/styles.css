@@ -1,0 +1,10 @@
+/* vertical checkbox group 
+.ant-checkbox-group-item {
+  display: block;
+  margin-right: 0;
+}
+*/
+.ant-checkbox-group {
+  display: flex;
+  flex-direction: column;
+}

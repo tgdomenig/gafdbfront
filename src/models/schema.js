@@ -1,7 +1,7 @@
 export const schema = {
   "models": {
-    "AppConfig": {
-      "name": "AppConfig",
+    "ConfigItem": {
+      "name": "ConfigItem",
       "fields": {
         "id": {
           "name": "id",
@@ -14,39 +14,11 @@ export const schema = {
           "name": "displayId",
           "isArray": false,
           "type": "String",
-          "isRequired": true,
-          "attributes": []
-        },
-        "CurrentConcoursShow": {
-          "name": "CurrentConcoursShow",
-          "isArray": false,
-          "type": "String",
           "isRequired": false,
           "attributes": []
         },
-        "CurrentHomeScreen": {
-          "name": "CurrentHomeScreen",
-          "isArray": false,
-          "type": "String",
-          "isRequired": false,
-          "attributes": []
-        },
-        "ConcoursLiveStreamLink": {
-          "name": "ConcoursLiveStreamLink",
-          "isArray": false,
-          "type": "String",
-          "isRequired": false,
-          "attributes": []
-        },
-        "ConcoursCurrentRound": {
-          "name": "ConcoursCurrentRound",
-          "isArray": false,
-          "type": "String",
-          "isRequired": false,
-          "attributes": []
-        },
-        "ConcoursCurrentSession": {
-          "name": "ConcoursCurrentSession",
+        "data": {
+          "name": "data",
           "isArray": false,
           "type": "String",
           "isRequired": false,
@@ -70,7 +42,7 @@ export const schema = {
         }
       },
       "syncable": true,
-      "pluralName": "AppConfigs",
+      "pluralName": "ConfigItems",
       "attributes": [
         {
           "type": "model",
@@ -105,246 +77,6 @@ export const schema = {
         }
       ]
     },
-    "DsUser": {
-      "name": "DsUser",
-      "fields": {
-        "deviceId": {
-          "name": "deviceId",
-          "isArray": false,
-          "type": "String",
-          "isRequired": true,
-          "attributes": []
-        },
-        "notificationPushToken": {
-          "name": "notificationPushToken",
-          "isArray": false,
-          "type": "String",
-          "isRequired": false,
-          "attributes": []
-        },
-        "favourites": {
-          "name": "favourites",
-          "isArray": true,
-          "type": {
-            "model": "DsUserFavourite"
-          },
-          "isRequired": true,
-          "attributes": [],
-          "isArrayNullable": true,
-          "association": {
-            "connectionType": "HAS_MANY",
-            "associatedWith": [
-              "dsUserFavouritesDeviceId"
-            ]
-          }
-        },
-        "language": {
-          "name": "language",
-          "isArray": false,
-          "type": "String",
-          "isRequired": false,
-          "attributes": []
-        },
-        "votes": {
-          "name": "votes",
-          "isArray": true,
-          "type": {
-            "nonModel": "DsVote"
-          },
-          "isRequired": true,
-          "attributes": [],
-          "isArrayNullable": true
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "isArray": false,
-          "type": "AWSDateTime",
-          "isRequired": false,
-          "attributes": [],
-          "isReadOnly": true
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "isArray": false,
-          "type": "AWSDateTime",
-          "isRequired": false,
-          "attributes": [],
-          "isReadOnly": true
-        }
-      },
-      "syncable": true,
-      "pluralName": "DsUsers",
-      "attributes": [
-        {
-          "type": "model",
-          "properties": {}
-        },
-        {
-          "type": "aws_cognito_user_pools",
-          "properties": {}
-        },
-        {
-          "type": "key",
-          "properties": {
-            "fields": [
-              "deviceId"
-            ]
-          }
-        },
-        {
-          "type": "auth",
-          "properties": {
-            "rules": [
-              {
-                "groupClaim": "cognito:groups",
-                "provider": "userPools",
-                "allow": "groups",
-                "groups": [
-                  "Admin"
-                ],
-                "operations": [
-                  "create",
-                  "delete",
-                  "read",
-                  "update"
-                ]
-              },
-              {
-                "allow": "public",
-                "operations": [
-                  "create",
-                  "read",
-                  "update"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "DsUserFavourite": {
-      "name": "DsUserFavourite",
-      "fields": {
-        "id": {
-          "name": "id",
-          "isArray": false,
-          "type": "ID",
-          "isRequired": true,
-          "attributes": []
-        },
-        "userId": {
-          "name": "userId",
-          "isArray": false,
-          "type": "ID",
-          "isRequired": false,
-          "attributes": []
-        },
-        "artistId": {
-          "name": "artistId",
-          "isArray": false,
-          "type": "ID",
-          "isRequired": false,
-          "attributes": []
-        },
-        "isActive": {
-          "name": "isActive",
-          "isArray": false,
-          "type": "Boolean",
-          "isRequired": false,
-          "attributes": []
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "isArray": false,
-          "type": "AWSDateTime",
-          "isRequired": false,
-          "attributes": [],
-          "isReadOnly": true
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "isArray": false,
-          "type": "AWSDateTime",
-          "isRequired": false,
-          "attributes": [],
-          "isReadOnly": true
-        },
-        "dsUserFavouritesDeviceId": {
-          "name": "dsUserFavouritesDeviceId",
-          "isArray": false,
-          "type": "String",
-          "isRequired": false,
-          "attributes": []
-        },
-        "dsPersonFansId": {
-          "name": "dsPersonFansId",
-          "isArray": false,
-          "type": "ID",
-          "isRequired": false,
-          "attributes": []
-        }
-      },
-      "syncable": true,
-      "pluralName": "DsUserFavourites",
-      "attributes": [
-        {
-          "type": "model",
-          "properties": {}
-        },
-        {
-          "type": "aws_cognito_user_pools",
-          "properties": {}
-        },
-        {
-          "type": "key",
-          "properties": {
-            "name": "byUser",
-            "fields": [
-              "userId"
-            ]
-          }
-        },
-        {
-          "type": "key",
-          "properties": {
-            "name": "byArtist",
-            "fields": [
-              "artistId"
-            ]
-          }
-        },
-        {
-          "type": "auth",
-          "properties": {
-            "rules": [
-              {
-                "groupClaim": "cognito:groups",
-                "provider": "userPools",
-                "allow": "groups",
-                "groups": [
-                  "Admin"
-                ],
-                "operations": [
-                  "create",
-                  "delete",
-                  "read",
-                  "update"
-                ]
-              },
-              {
-                "allow": "public",
-                "operations": [
-                  "create",
-                  "read",
-                  "update",
-                  "delete"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
     "DsPost": {
       "name": "DsPost",
       "fields": {
@@ -360,6 +92,15 @@ export const schema = {
           "isArray": false,
           "type": {
             "enum": "DsPostType"
+          },
+          "isRequired": false,
+          "attributes": []
+        },
+        "publicationStatus": {
+          "name": "publicationStatus",
+          "isArray": false,
+          "type": {
+            "enum": "DsPublicationStatus"
           },
           "isRequired": false,
           "attributes": []
@@ -608,22 +349,6 @@ export const schema = {
             ]
           }
         },
-        "fans": {
-          "name": "fans",
-          "isArray": true,
-          "type": {
-            "model": "DsUserFavourite"
-          },
-          "isRequired": true,
-          "attributes": [],
-          "isArrayNullable": true,
-          "association": {
-            "connectionType": "HAS_MANY",
-            "associatedWith": [
-              "dsPersonFansId"
-            ]
-          }
-        },
         "createdAt": {
           "name": "createdAt",
           "isArray": false,
@@ -695,6 +420,13 @@ export const schema = {
           "name": "id",
           "isArray": false,
           "type": "ID",
+          "isRequired": true,
+          "attributes": []
+        },
+        "displayId": {
+          "name": "displayId",
+          "isArray": false,
+          "type": "String",
           "isRequired": true,
           "attributes": []
         },
@@ -861,6 +593,13 @@ export const schema = {
           "isRequired": true,
           "attributes": []
         },
+        "displayId": {
+          "name": "displayId",
+          "isArray": false,
+          "type": "String",
+          "isRequired": true,
+          "attributes": []
+        },
         "missionId": {
           "name": "missionId",
           "isArray": false,
@@ -873,13 +612,6 @@ export const schema = {
           "isArray": false,
           "type": "ID",
           "isRequired": true,
-          "attributes": []
-        },
-        "sessionId": {
-          "name": "sessionId",
-          "isArray": false,
-          "type": "ID",
-          "isRequired": false,
           "attributes": []
         },
         "admittedToCompete": {
@@ -975,15 +707,6 @@ export const schema = {
           }
         },
         {
-          "type": "key",
-          "properties": {
-            "name": "bySession",
-            "fields": [
-              "sessionId"
-            ]
-          }
-        },
-        {
           "type": "auth",
           "properties": {
             "rules": [
@@ -1054,10 +777,109 @@ export const schema = {
           "isRequired": false,
           "attributes": []
         },
-        "isActive": {
-          "name": "isActive",
+        "createdAt": {
+          "name": "createdAt",
           "isArray": false,
-          "type": "Boolean",
+          "type": "AWSDateTime",
+          "isRequired": false,
+          "attributes": [],
+          "isReadOnly": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "isArray": false,
+          "type": "AWSDateTime",
+          "isRequired": false,
+          "attributes": [],
+          "isReadOnly": true
+        }
+      },
+      "syncable": true,
+      "pluralName": "DsGenericItems",
+      "attributes": [
+        {
+          "type": "model",
+          "properties": {}
+        },
+        {
+          "type": "aws_cognito_user_pools",
+          "properties": {}
+        },
+        {
+          "type": "auth",
+          "properties": {
+            "rules": [
+              {
+                "groupClaim": "cognito:groups",
+                "provider": "userPools",
+                "allow": "groups",
+                "groups": [
+                  "Admin"
+                ],
+                "operations": [
+                  "create",
+                  "update",
+                  "delete",
+                  "read"
+                ]
+              },
+              {
+                "allow": "public",
+                "operations": [
+                  "read"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "DsShortPost": {
+      "name": "DsShortPost",
+      "fields": {
+        "id": {
+          "name": "id",
+          "isArray": false,
+          "type": "ID",
+          "isRequired": true,
+          "attributes": []
+        },
+        "publicationStatus": {
+          "name": "publicationStatus",
+          "isArray": false,
+          "type": {
+            "enum": "DsPublicationStatus"
+          },
+          "isRequired": false,
+          "attributes": []
+        },
+        "publishDate": {
+          "name": "publishDate",
+          "isArray": false,
+          "type": "AWSDate",
+          "isRequired": false,
+          "attributes": []
+        },
+        "displayId": {
+          "name": "displayId",
+          "isArray": false,
+          "type": "String",
+          "isRequired": true,
+          "attributes": []
+        },
+        "category": {
+          "name": "category",
+          "isArray": false,
+          "type": "String",
+          "isRequired": false,
+          "attributes": []
+        },
+        "textField": {
+          "name": "textField",
+          "isArray": false,
+          "type": {
+            "nonModel": "TextField"
+          },
           "isRequired": false,
           "attributes": []
         },
@@ -1079,7 +901,7 @@ export const schema = {
         }
       },
       "syncable": true,
-      "pluralName": "DsGenericItems",
+      "pluralName": "DsShortPosts",
       "attributes": [
         {
           "type": "model",
@@ -1553,6 +1375,13 @@ export const schema = {
           "isRequired": true,
           "attributes": []
         },
+        "displayId": {
+          "name": "displayId",
+          "isArray": false,
+          "type": "String",
+          "isRequired": true,
+          "attributes": []
+        },
         "sessionName": {
           "name": "sessionName",
           "isArray": false,
@@ -1591,18 +1420,10 @@ export const schema = {
         "competitors": {
           "name": "competitors",
           "isArray": true,
-          "type": {
-            "model": "DsParticipation"
-          },
+          "type": "String",
           "isRequired": true,
           "attributes": [],
-          "isArrayNullable": true,
-          "association": {
-            "connectionType": "HAS_MANY",
-            "associatedWith": [
-              "sessionId"
-            ]
-          }
+          "isArrayNullable": true
         },
         "createdAt": {
           "name": "createdAt",
@@ -1858,6 +1679,13 @@ export const schema = {
           "isRequired": true,
           "attributes": []
         },
+        "displayId": {
+          "name": "displayId",
+          "isArray": false,
+          "type": "String",
+          "isRequired": false,
+          "attributes": []
+        },
         "musicPieceId": {
           "name": "musicPieceId",
           "isArray": false,
@@ -1865,10 +1693,12 @@ export const schema = {
           "isRequired": true,
           "attributes": []
         },
-        "link": {
-          "name": "link",
+        "videoLink": {
+          "name": "videoLink",
           "isArray": false,
-          "type": "String",
+          "type": {
+            "nonModel": "VideoLink"
+          },
           "isRequired": false,
           "attributes": []
         },
@@ -2000,6 +1830,22 @@ export const schema = {
           "isArray": false,
           "type": "String",
           "isRequired": true,
+          "attributes": []
+        },
+        "publicationStatus": {
+          "name": "publicationStatus",
+          "isArray": false,
+          "type": {
+            "enum": "DsPublicationStatus"
+          },
+          "isRequired": false,
+          "attributes": []
+        },
+        "publishDate": {
+          "name": "publishDate",
+          "isArray": false,
+          "type": "AWSDate",
+          "isRequired": false,
           "attributes": []
         },
         "title": {
@@ -2505,6 +2351,98 @@ export const schema = {
         }
       ]
     },
+    "DsNotificationRecipient": {
+      "name": "DsNotificationRecipient",
+      "fields": {
+        "notificationPushToken": {
+          "name": "notificationPushToken",
+          "isArray": false,
+          "type": "String",
+          "isRequired": true,
+          "attributes": []
+        },
+        "favourites": {
+          "name": "favourites",
+          "isArray": true,
+          "type": "String",
+          "isRequired": true,
+          "attributes": [],
+          "isArrayNullable": true
+        },
+        "language": {
+          "name": "language",
+          "isArray": false,
+          "type": "String",
+          "isRequired": false,
+          "attributes": []
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "isArray": false,
+          "type": "AWSDateTime",
+          "isRequired": false,
+          "attributes": [],
+          "isReadOnly": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "isArray": false,
+          "type": "AWSDateTime",
+          "isRequired": false,
+          "attributes": [],
+          "isReadOnly": true
+        }
+      },
+      "syncable": true,
+      "pluralName": "DsNotificationRecipients",
+      "attributes": [
+        {
+          "type": "model",
+          "properties": {}
+        },
+        {
+          "type": "aws_cognito_user_pools",
+          "properties": {}
+        },
+        {
+          "type": "key",
+          "properties": {
+            "fields": [
+              "notificationPushToken"
+            ]
+          }
+        },
+        {
+          "type": "auth",
+          "properties": {
+            "rules": [
+              {
+                "groupClaim": "cognito:groups",
+                "provider": "userPools",
+                "allow": "groups",
+                "groups": [
+                  "Admin"
+                ],
+                "operations": [
+                  "create",
+                  "delete",
+                  "read",
+                  "update"
+                ]
+              },
+              {
+                "allow": "public",
+                "operations": [
+                  "create",
+                  "read",
+                  "update"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
     "DsVoting": {
       "name": "DsVoting",
       "fields": {
@@ -2571,6 +2509,22 @@ export const schema = {
           "isRequired": false,
           "attributes": []
         },
+        "votes": {
+          "name": "votes",
+          "isArray": true,
+          "type": {
+            "model": "DsVote"
+          },
+          "isRequired": true,
+          "attributes": [],
+          "isArrayNullable": true,
+          "association": {
+            "connectionType": "HAS_MANY",
+            "associatedWith": [
+              "dsVotingVotesId"
+            ]
+          }
+        },
         "createdAt": {
           "name": "createdAt",
           "isArray": false,
@@ -2621,6 +2575,105 @@ export const schema = {
                 "allow": "public",
                 "operations": [
                   "read"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "DsVote": {
+      "name": "DsVote",
+      "fields": {
+        "id": {
+          "name": "id",
+          "isArray": false,
+          "type": "ID",
+          "isRequired": true,
+          "attributes": []
+        },
+        "votingId": {
+          "name": "votingId",
+          "isArray": false,
+          "type": "ID",
+          "isRequired": true,
+          "attributes": []
+        },
+        "choice": {
+          "name": "choice",
+          "isArray": false,
+          "type": "String",
+          "isRequired": false,
+          "attributes": []
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "isArray": false,
+          "type": "AWSDateTime",
+          "isRequired": false,
+          "attributes": [],
+          "isReadOnly": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "isArray": false,
+          "type": "AWSDateTime",
+          "isRequired": false,
+          "attributes": [],
+          "isReadOnly": true
+        },
+        "dsVotingVotesId": {
+          "name": "dsVotingVotesId",
+          "isArray": false,
+          "type": "ID",
+          "isRequired": false,
+          "attributes": []
+        }
+      },
+      "syncable": true,
+      "pluralName": "DsVotes",
+      "attributes": [
+        {
+          "type": "model",
+          "properties": {}
+        },
+        {
+          "type": "aws_cognito_user_pools",
+          "properties": {}
+        },
+        {
+          "type": "key",
+          "properties": {
+            "name": "Votes",
+            "fields": [
+              "votingId"
+            ]
+          }
+        },
+        {
+          "type": "auth",
+          "properties": {
+            "rules": [
+              {
+                "groupClaim": "cognito:groups",
+                "provider": "userPools",
+                "allow": "groups",
+                "groups": [
+                  "Admin"
+                ],
+                "operations": [
+                  "create",
+                  "delete",
+                  "read",
+                  "update"
+                ]
+              },
+              {
+                "allow": "public",
+                "operations": [
+                  "create",
+                  "read",
+                  "update"
                 ]
               }
             ]
@@ -3130,6 +3183,14 @@ export const schema = {
     }
   },
   "enums": {
+    "DsPublicationStatus": {
+      "name": "DsPublicationStatus",
+      "values": [
+        "DRAFT",
+        "SUBMITTED",
+        "PUBLISHED"
+      ]
+    },
     "DsPostType": {
       "name": "DsPostType",
       "values": [
@@ -3169,6 +3230,13 @@ export const schema = {
         "SCREENING_JURY",
         "CONDUCTOR",
         "OTHER"
+      ]
+    },
+    "VideoPlatform": {
+      "name": "VideoPlatform",
+      "values": [
+        "YOUTUBE",
+        "VIMEO"
       ]
     }
   },
@@ -3343,10 +3411,40 @@ export const schema = {
           "isRequired": true,
           "attributes": []
         },
-        "link": {
-          "name": "link",
+        "videoLink": {
+          "name": "videoLink",
+          "isArray": false,
+          "type": {
+            "nonModel": "VideoLink"
+          },
+          "isRequired": false,
+          "attributes": []
+        }
+      }
+    },
+    "VideoLink": {
+      "name": "VideoLink",
+      "fields": {
+        "platform": {
+          "name": "platform",
+          "isArray": false,
+          "type": {
+            "enum": "VideoPlatform"
+          },
+          "isRequired": false,
+          "attributes": []
+        },
+        "videoId": {
+          "name": "videoId",
           "isArray": false,
           "type": "String",
+          "isRequired": false,
+          "attributes": []
+        },
+        "startTimeInSeconds": {
+          "name": "startTimeInSeconds",
+          "isArray": false,
+          "type": "Int",
           "isRequired": false,
           "attributes": []
         }
@@ -3446,27 +3544,8 @@ export const schema = {
           "attributes": []
         }
       }
-    },
-    "DsVote": {
-      "name": "DsVote",
-      "fields": {
-        "votingId": {
-          "name": "votingId",
-          "isArray": false,
-          "type": "String",
-          "isRequired": true,
-          "attributes": []
-        },
-        "choice": {
-          "name": "choice",
-          "isArray": false,
-          "type": "String",
-          "isRequired": true,
-          "attributes": []
-        }
-      }
     }
   },
   "codegenVersion": "3.4.4",
-  "version": "76c9d5769107879fa599313fb9ab70eb"
+  "version": "65824be2cda2c14a81a453787844c13d"
 };
