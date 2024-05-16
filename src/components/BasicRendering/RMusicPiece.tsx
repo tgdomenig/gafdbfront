@@ -1,5 +1,9 @@
+
+import { DsMusicPiece, DsPerformedConstituent, TextField } from "../../models";
+import { ENGLISH } from "../../util/common/language";
 import { EChosenPiece } from "../Competition/RAuditionEditor";
 import { MusicPiece } from "../Competition/StageMusicPiece";
+import { RListOfStrings } from "./RStrings";
 
 
 export function RChosenPieces({ chosenPieces }: { chosenPieces: EChosenPiece[]; }) {
@@ -23,6 +27,27 @@ export function RChosenPieces({ chosenPieces }: { chosenPieces: EChosenPiece[]; 
   );
 }
 
+export function RDsMusicPiece({ musicPiece }: { musicPiece: DsMusicPiece }) {
+  const lg = ENGLISH;
+  const {composer, displayName, constituents} = musicPiece;
+
+  if (! composer) {
+    return <div />;
+  }
+  else {
+    const constituentsDNames = constituents
+    ? constituents.map(c => c ? c.displayName[lg] : "").filter(c => !! c)
+    : undefined;
+
+    return (
+      <div>
+        <RMusicPieceLabel musicPiece={musicPiece} />
+        <RListOfStrings strings={constituentsDNames} slug="constituent" />
+      </div>
+    );
+  }
+}
+
 export function RChosenPiece({ chosenPiece }: { chosenPiece: EChosenPiece; }) {
   const {musicPiece, chosenConstituentsDids} = chosenPiece;
   return (
@@ -39,16 +64,15 @@ export function RChosenPiece({ chosenPiece }: { chosenPiece: EChosenPiece; }) {
   );
 }
 
-export function RMusicPieceLabel({ musicPiece }: { musicPiece?: MusicPiece; }): JSX.Element {
-  if (! musicPiece) {
-    return <div />
-  }
-  else {
-    const { composer, displayName } = musicPiece;
+export function RMusicPieceLabel({ musicPiece }: { musicPiece?: DsMusicPiece; }): JSX.Element {
 
-    return (
-      <div><span><strong>{composer}: </strong>{displayName}</span></div>
-    );  
+  if (musicPiece) {
+    const {composer, displayName} = musicPiece;
+    if (composer) {
+      return(
+        <div><span><strong>{composer}: </strong>{displayName[ENGLISH]}</span></div>
+      );
+    }
   }
+  return(<div />)
 }
-

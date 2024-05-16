@@ -2,7 +2,7 @@ import { Modal, Select } from "antd";
 import { Displayable } from "../../data/Datastore/ModelsWeb/Base/Displayable";
 import { Styling } from "./StylingConstants";
 import { useState } from "react";
-import { RButton } from "./Base";
+import { RButton } from "./Buttons";
 
 
 type RDisplayablePickerProps<T extends Displayable> = {
@@ -66,7 +66,7 @@ export function RDisplayablePicker<T extends Displayable>({title, items, selecte
         onCancel={ () => setIsModalOpen(false) }
         >
         <Select
-          style={{width: Styling.SELECT_WIDTH}}
+          style={{minWidth: Styling.SCREEN_WIDTH}}
           value={currentSelectedItem}
           onChange={(did: string) => { setCurrentSelectedItem(did) }}
           options={options}

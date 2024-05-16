@@ -10,7 +10,7 @@ type SelectRoundProps = {
 export function SelectRound({onChange}: SelectRoundProps) {
   return(
     <Select
-      style={{width: Styling.SELECT_WIDTH}}
+      style={{minWidth: Styling.SCREEN_WIDTH}}
       onChange={onChange}
       options={RoundDisplayIds.map(did => ({value: did, label: did}))}
     />

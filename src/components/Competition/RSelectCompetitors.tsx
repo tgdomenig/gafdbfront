@@ -1,11 +1,10 @@
 import { Checkbox, Select } from "antd";
 import { useEffect, useState } from "react";
-import { RoundDisplayIdType, RoundDisplayIds, getEligibleCompetitors } from "../Base/Helpers";
-import { DsParticipation } from "../../models";
-import { SelectRound } from "./Base";
+import { DsConcoursRound, DsParticipation } from "../../models";
 import { SubTitle } from "../Base/Base";
 import { ConfirmAndSubmit } from "../Base/ConfirmAndSubmit";
 import { RParagraph } from "../Base/RParagraph";
+import { RoundDisplayIdType, getEligibleCompetitors } from "../Base/Helpers";
 
 
 /**
@@ -13,46 +12,71 @@ import { RParagraph } from "../Base/RParagraph";
  * Lädt die Competitors der letzten Runde und ruft das Formular auf zur Auswahl der Competitors für diese Runde
  * 
  */
-export function RSelectCompetitors() {
+type RSelectCompetitors = {
+  round: DsConcoursRound,
+  competitors: DsParticipation[],
+  onSubmit: (competitorDids: string[]) => void,
+  onCancel: () => void
+}
+export function RSelectCompetitors({round, competitors, onSubmit, onCancel}: RSelectCompetitors) {
 
-  const [currentRound, setCurrentRound] = useState<RoundDisplayIdType|"">("");
-  const [competitors, setCompetitors] = useState<DsParticipation[]>([]);
+  const [eligibleCompetitors, setEligibleCompetitors] = useState<DsParticipation[]>([]);
 
-  const [selection, setSelection] = useState<string[]>([]);
+  type SelectOption = {label: string, value: string};
+
+  const [selection, setSelection] = useState<string[]>(competitors.map(c => c.missionId));
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-      const load = async () => {
-        if (currentRound) {
-          setCompetitors(await getEligibleCompetitors(currentRound));
-        }
-      }
-      load();
+    const load = async () => {
+      setEligibleCompetitors(await getEligibleCompetitors(round.displayId as RoundDisplayIdType));
+    }
+    load();
     },
-  [currentRound]);
+  [round]);
+
+  const getDisplayName = (missionId: string) => {
+    const competitor = eligibleCompetitors.find(c => c.missionId === missionId);
+    return (competitor) ? competitor.displayId : "unknown competitor !";
+  }
+    
+  /*
+    Bemerkung: Participations beziehen sich auf die Runden. 
+    Die "eligible competitors" sind Participations der Vorrunde und haben z.B. nicht dieselben displayIds wie Participations in dieser Runde.
+    Die Missions hingegen beziehen sich auf die Kandidaten und sind stabil über die Runden hinweg
+  */ 
+  const options = eligibleCompetitors.map(c => {
+    const {displayId, missionId} = c;
+    return {
+      label: displayId,
+      value: missionId
+    }
+  });
 
   return(
     <div>
-      <SelectRound onChange={(round) => { setCurrentRound(round); }} />
-
-      {currentRound && competitors.length > 0
+      {eligibleCompetitors.length > 0
         ? <div >
 
-            <SubTitle title={`Select Candidates`} />
+            <SubTitle title={`Edit Candidates`} />
 
             <Checkbox.Group
-              options={competitors.map(c => c.displayId)} 
+              value={selection}
+              options={options}
               style={{ display: 'flex', flexDirection: 'column' }}
               onChange={ (items: string[]) => setSelection(items)}
             />
       
             <ConfirmAndSubmit<string[]> 
                 data={selection} 
-                onSubmit={(competitorDids: string[]) => {console.log("SUBMIT", competitorDids)}}
+                onSubmit={onSubmit}
+                onCancel={onCancel}
                 disabled={selection.length === 0}
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
-                renderData={(strings: string[]) => <RParagraph content={strings}/>}
+                renderData={(missionIds: string[]) => 
+                    <RParagraph content={missionIds.map(getDisplayName)}/>
+                }
             />
           </div>
         : <div />

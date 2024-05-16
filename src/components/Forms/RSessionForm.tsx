@@ -1,19 +1,21 @@
 import { Button, Checkbox, Divider, Modal } from "antd";
-import ShowJson from "../Base/JsonPP";
 import { useState } from "react";
 import './styles.css'
-import { RButton, SubTitle } from "../Base/Base";
-import { getCandidateName, todayAt } from "../Base/Helpers";
+import { SubTitle } from "../Base/Base";
+import { getCandidateName } from "../Base/Helpers";
 import { RenderESession } from "../BasicRendering/RSession";
 import TimeFnsPicker from "../Base/TimeFnsPicker";
 import DateFnsPicker from "../Base/DateFnsPicker";
 import { ConfirmAndSubmit } from "../Base/ConfirmAndSubmit";
 import { RSortableList } from "../Base/RSortableList";
+import { MyBox } from "../Base/MyBox";
 
 type RSelectProps = {
   roundDid: string,
-  eligibleCandidates: string[], // items can be e.g. ids or displayIds
+  session: ESession,
+  eligibleCompetitors: string[], // items can be e.g. ids or displayIds
   onSubmit: (session: ESession) => void
+  onCancel: () => void
 }
 
 export type ESession = { // "E" for "edit"
@@ -24,61 +26,63 @@ export type ESession = { // "E" for "edit"
   competitors: string[] // displayIds
 }
 
-export function RSessionForm({roundDid, eligibleCandidates: items, onSubmit}: RSelectProps) {
+export function RSessionForm({roundDid, session, eligibleCompetitors, onSubmit, onCancel}: RSelectProps) {
 
-  const [session, setSession] = useState<ESession>({
-    sessionName: "",
-    date: new Date(),
-    start: todayAt(10),
-    end: todayAt(11),
-    competitors: []
-  });
+  const [currentSession, setCurrentSession] = useState<ESession>({...session});
+  //   sessionName: "",
+  //   date: new Date(),
+  //   start: todayAt(10),
+  //   end: todayAt(11),
+  //   competitors: []
+  // });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const options = items.map((candidate) => ({label: getCandidateName(candidate), value: candidate}));
+  const options = eligibleCompetitors.map((candidate) => ({label: getCandidateName(candidate), value: candidate}));
 
   return(
-    <div style={{padding: 20, backgroundColor: '#DEDEDE'}}>
+    <MyBox type="edit">
 
       <SubTitle title={`Define Session for ${roundDid}`} />
 
       <div style={{marginBottom: 20}}>
-        <DateFnsPicker format="dd.MM.yyyy" defaultValue={session.date} placeholder="Datum"
-          onChange={(d: Date) => setSession({...session, date: d})}        
+        <DateFnsPicker format="dd.MM.yyyy" defaultValue={currentSession.date} placeholder="Datum"
+          onChange={(d: Date) => setCurrentSession({...currentSession, date: d})}        
         />
 
-        <TimeFnsPicker format="HH:mm" minuteStep={5} defaultValue={session.start} placeholder="Von"
-          onChange={(t: Date) => setSession({...session, start: t})}        
+        <TimeFnsPicker format="HH:mm" minuteStep={5} defaultValue={currentSession.start} placeholder="Von"
+          onChange={(t: Date) => setCurrentSession({...currentSession, start: t})}        
         />
     
-        <TimeFnsPicker format="HH:mm" minuteStep={5} defaultValue={session.end} placeholder="Bis"
-          onChange={(t: Date) => setSession({...session, end: t})}        
+        <TimeFnsPicker format="HH:mm" minuteStep={5} defaultValue={currentSession.end} placeholder="Bis"
+          onChange={(t: Date) => setCurrentSession({...currentSession, end: t})}        
         />
       </div>
       <Checkbox.Group
+        value={currentSession.competitors}
         options={options}
         style={{ display: 'flex', flexDirection: 'column' }}
-        onChange={ (candidates: string[]) => setSession({...session, competitors: candidates})}
+        onChange={ (candidates: string[]) => setCurrentSession({...currentSession, competitors: candidates})}
       />
 
       <Divider />
 
       <RSortableList<string> 
-          items={session.competitors} 
-          onChange={(sorted: string[]) => { setSession({...session, competitors: sorted}) }}
+          items={currentSession.competitors} 
+          onChange={(sorted: string[]) => { setCurrentSession({...currentSession, competitors: sorted}) }}
           render={(did: string) => <div>{did}</div>} />
 
       <ConfirmAndSubmit<ESession> 
-          data={session} 
+          data={currentSession} 
           onSubmit={onSubmit}
-          disabled={session.competitors.length === 0}
+          onCancel={onCancel}
+          disabled={currentSession.competitors.length === 0}
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
-          renderData={(session: ESession) => <RenderESession session={session} />}
+          renderData={(sn: ESession) => <RenderESession session={sn} />}
       />
 
-    </div>
+    </MyBox>
   );
 }
 

@@ -17,6 +17,7 @@ import { xGetStaged } from "../../data/Datastore/ModelsCommon/Base/xGetStaged";
 import { DsPublicationStatus } from "../../models";
 import { format, set } from "date-fns";
 import { itcAssert } from "../../util/common/general/tests";
+import { RIconButton } from "../Base/Buttons";
 
 const publicationStatusLookup = new Map<string, DsPublicationStatus>([
   ["Draft", DsPublicationStatus.DRAFT],
@@ -161,7 +162,7 @@ export function ShortPostEditor() {
       <pre className={"json-box"}>{toJson(true)}</pre>
 
       <div className="itc-row">
-        <Button onClick={copyToClipboard}>Copy to Clipboard</Button>
+        <RIconButton icon="copy" onClick={copyToClipboard} />
         <Button 
             type="primary"
             style={{minWidth: 200}}

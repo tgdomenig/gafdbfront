@@ -1,9 +1,11 @@
 
 import { useEffect, useState } from "react";
-import { RoundDisplayIdType, competitor2CandidateDid, getCompetitors } from "../Base/Helpers";
-import { DsParticipation } from "../../models";
-import { ESession, RSessionForm } from "../Forms/RSessionForm";
-
+import { RoundDisplayIdType } from "../Base/Helpers";
+import { ESession } from "../Forms/RSessionForm";
+import { RenderESession } from "../BasicRendering/RSession";
+import { MyBox } from "../Base/MyBox";
+import { RSessionEditor } from "./RSessionEditor";
+import { RIconButton } from "../Base/Buttons";
 
 /**
  * Auswahl der aktuellen Runde
@@ -11,44 +13,34 @@ import { ESession, RSessionForm } from "../Forms/RSessionForm";
  * Ruft das Sessions-Formular auf
  * 
  */
+export function RSession({roundDid, session}: {roundDid: RoundDisplayIdType, session: ESession}) {
 
-type RSessionEditorProps = {
-  roundDid: RoundDisplayIdType, 
-  session: ESession,
-  onSubmit: (s: ESession) => void
-  onCancel: () => void
-}
-export function RSessionEditor({roundDid, session, onSubmit, onCancel}: RSessionEditorProps) {
-
-  const [competitors, setCompetitors] = useState<DsParticipation[]>([]);
+  const [isEditMode, setEditMode] = useState(false);
 
   useEffect(() => {
-    const load = async () => {
-      if (roundDid) {
-        const currentCompetitors = await getCompetitors(roundDid);
-        setCompetitors(currentCompetitors)
-      }
-    }
-    load();
-  },
-  [roundDid]);
+    setEditMode(false);
+  }, [roundDid])
 
-  if (competitors) {
+  if (isEditMode) {
     return(
-        <RSessionForm 
+      <RSessionEditor 
+          roundDid={roundDid}
           session={session}
-          roundDid={roundDid} 
-          eligibleCompetitors={competitors.map(c => competitor2CandidateDid(c.displayId))}
-          onSubmit={onSubmit}
-          onCancel={onCancel}
-        />
+          onSubmit={ (sn: ESession) => { setEditMode(false) } }
+          onCancel={ () => { setEditMode(false) } }
+      />
     );
   }
   else {
-    return <div />;
+    return(
+      <div>
+        <MyBox toTheRight={<RIconButton icon="edit" onClick={() => { setEditMode(true); }} />}>
+          <RenderESession session={session} />
+        </MyBox>
+      </div>
+  );
   }
 }
-
 
 
 const ROUNDS = {

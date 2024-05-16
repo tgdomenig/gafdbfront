@@ -44,6 +44,17 @@ export async function getCompetitors(roundDid: typeof RoundDisplayIds[number]): 
   }
 }
 
+export const competitor2CandidateDid = (competitorDid: string) : string => {
+  const parts = competitorDid.split('|');
+  if (parts.length === 2) {
+    return parts[1];
+  }
+  else {
+    console.log("competitorDid, parts", competitorDid, parts)
+    throw new Error("ITC ERROR [competitor2CandidateDid]: something wrong!!")
+  }
+}
+
 export const getCandidateName = (candidateDid: string) : string => {
   const start = 'C24 CAND: '.length;
   return candidateDid.substring(start);

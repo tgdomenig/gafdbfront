@@ -1,19 +1,20 @@
 import { Button, Checkbox, Divider, Select } from "antd";
 import { useEffect, useState } from "react";
-import { MusicPiece } from "../Competition/StageMusicPiece";
 import { RDisplayablePicker } from "../Base/RDisplayablePicker";
 import { EChosenPiece } from "../Competition/RAuditionEditor";
 import { RMusicPieceLabel } from "../BasicRendering/RMusicPiece";
+import { DsMusicPiece } from "../../models";
+import { filterNull } from "../Base/Base";
 
 type RChosenPieceFormProps = {
   chosenPiece: EChosenPiece, 
-  repertoire: MusicPiece[],
+  repertoire: DsMusicPiece[],
   onChange: (p: EChosenPiece) => void
 }
 
 export function RChosenPieceForm({chosenPiece, repertoire, onChange}: RChosenPieceFormProps) {
 
-  const [selected, setSelected] = useState<MusicPiece|undefined>(chosenPiece.musicPiece);
+  const [selected, setSelected] = useState<DsMusicPiece|undefined>(chosenPiece.musicPiece);
   const [chosenConstituents, setChosenConstituents] = useState<string[]>(chosenPiece.chosenConstituentsDids);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export function RChosenPieceForm({chosenPiece, repertoire, onChange}: RChosenPie
     }, [chosenPiece]
   );
 
-  const notify = (newSelectedMusicPiece: MusicPiece|undefined, newChosenConstituents: string[]) => {
+  const notify = (newSelectedMusicPiece: DsMusicPiece|undefined, newChosenConstituents: string[]) => {
     if (newSelectedMusicPiece) {
       onChange({
         ...chosenPiece,
@@ -37,24 +38,24 @@ export function RChosenPieceForm({chosenPiece, repertoire, onChange}: RChosenPie
   
   return(
     <div style={{marginBottom: 20}}>
-      <RDisplayablePicker<MusicPiece>
+      <RDisplayablePicker<DsMusicPiece>
           title={"Select Music Piece"}
           placeholder="Select Music Piece"
           selectedItem={selected}
-          setSelectedItem={(mp: MusicPiece) => {
+          setSelectedItem={(mp: DsMusicPiece) => {
             setSelected(mp);
             setChosenConstituents([]);
             notify(mp, chosenConstituents);
           }}
           items={repertoire}
-          render={(mp: MusicPiece) => <RMusicPieceLabel musicPiece={mp} />}
+          render={(mp: DsMusicPiece) => <RMusicPieceLabel musicPiece={mp} />}
       />
 
-      {selected
+      {selected && selected.constituents
         ? <Checkbox.Group
             value={chosenConstituents}
-            options={selected.constituents.map(c => {
-              return ({label: c.displayId, value: c.displayId})
+            options={filterNull(selected.constituents).map(c => {
+                return ({label: c.displayId, value: c.displayId})
             })}
             onChange={(dids: string[]) => { setChosenConstituents(dids); notify(selected, dids); }}
             style={{ display: 'flex', flexDirection: 'column' }}
@@ -64,5 +65,3 @@ export function RChosenPieceForm({chosenPiece, repertoire, onChange}: RChosenPie
     </div>
   );
 }
-
-

@@ -1,8 +1,8 @@
-import React, { Component , useState, useEffect} from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 
 import { Hub } from 'aws-amplify/utils'
-import { DataStore } from '@aws-amplify/datastore';
 import '@azure/core-asynciterator-polyfill'
+import { Context } from '../../util/dbFront/Context';
 
 // will be set before Datastore.start; similar to example application "multitenant" (LoadAuth)
 // READ https://aws.amazon.com/blogs/mobile/new-in-amplify-datastore-selective-sync-and-sort-functionality/
@@ -15,35 +15,43 @@ type MyProps = {
 
 
 export default function HasDatastore({children}: MyProps) : JSX.Element {
+  const {setDatastoreSynced} = useContext(Context);
 
   /* --------------- Main context variables --------------- */
 
   // indicates sync status of datastore
+
   const [isSynced, setIsSynced] = useState(false);
 
   useEffect(() => {
-    const hubListener = Hub.listen('datastore', async hubData => {
+
+    console.log("INSTALLING DATASTORE LISTENERS");
+
+    const datastoreListener = Hub.listen('datastore', async hubData => {
       const  { event, data } = hubData.payload;
       // console.log("=========================== HUB has DATASTORE EVENT: ===========================");
       // console.log(event);
       // console.log(data);
       switch (event) {
         case "syncQueriesStarted": {
+          setDatastoreSynced(false);
           setIsSynced(false);
           break;
         }
         case "syncQueriesReady": {
+          setDatastoreSynced(true);
           setIsSynced(true);
           break;
         }
         case "ready": {
+          setDatastoreSynced(true);
           setIsSynced(true);
           break;
         }
       }
     });
 
-    Hub.listen('auth', (data) => {
+    const authListener = Hub.listen('auth', (data) => {
       const { payload } = data;
 //      this.onAuthEvent(payload);
       console.log(
@@ -52,35 +60,15 @@ export default function HasDatastore({children}: MyProps) : JSX.Element {
       );
     });
     return(() => {
-      // Remove listener
-      console.log("App: Cleanup Hub Listener listener");
-      hubListener();
+      // Remove listeners
+      datastoreListener();
+      authListener();
     });
   }, [])
 
-  const [dataStoreReady, setDatastoreReady] = useState(false);
+  return(<>{children}</>);
 
-  // const clearDS = async () => {
-  //   await DataStore.clear();
-  //   console.info("Clear - DataStore");
-  // };
-
-  const startDS = async () => {
-//    console.log("=========================== DATASTORE CLEAR: ===========================");
-//    await clearDS();
-    console.log("=========================== DATASTORE START: ===========================");
-    await DataStore.start();
-    setDatastoreReady(true);
-    console.info("Start - DataStore");
-  };
-
-  useEffect(() => {
-    setIsSynced(false);
-    startDS();
-  }, []);
-
-  console.log("isSynced: " + isSynced);
-  if (isSynced && dataStoreReady) {
+  if (isSynced) {
     return(<>{children}</>);
   }
   else {

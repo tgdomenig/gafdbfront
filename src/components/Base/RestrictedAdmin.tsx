@@ -1,7 +1,6 @@
 import { signIn, type SignInInput, getCurrentUser } from 'aws-amplify/auth';
 
 import { useEffect, useState } from 'react';
-import { Credentials } from '../../AppConfig';
 import { Button, Input } from 'antd';
 
 // NEW NEW NEW NEW: https://docs.amplify.aws/react/build-a-backend/auth/enable-sign-up/#sign-in

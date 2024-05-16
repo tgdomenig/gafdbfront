@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Layout, Typography } from 'antd';
 
@@ -11,12 +11,14 @@ import { AppConfig } from './AppConfig';
 import './App.css';
 // import './AppConfig.css';
 import RestrictedAdmin from './components/Base/RestrictedAdmin';
+import { Context } from './util/dbFront/Context';
 
 Amplify.configure(awsconfig);
 
 function App() {
 
   const { Header, Footer, Content } = Layout;
+//  const {datastoreSynced} = useContext(Context)
 
   return (
       <Router>

@@ -1,17 +1,12 @@
-import { Divider, Select } from "antd";
 import { useEffect, useState } from "react";
-import { RoundDisplayIdType, RoundDisplayIds, getCompetitors } from "../Base/Helpers";
 import { DsMusicPiece, DsParticipation, DsPerformance, DsPerformedConstituent } from "../../models";
 import { getDsPerformances } from "../../data/Datastore/ModelsCommon/Performance/PerformanceR";
-import { xGetStaged } from "../../data/Datastore/ModelsCommon/Base/xGetStaged";
-import { getDsMusicPiece } from "../../data/Datastore/ModelsCommon/MusicPiece/MusicPieceR";
-import { MusicPiece, stageMusicPiece } from "./StageMusicPiece";
 import { ENGLISH } from "../../util/common/language";
-import { filteredMapAsync, mapAsync } from "../../util/common/general/collections";
-import { getRoundRepertoireStaged } from "./GetMusicPieces";
-import { Styling } from "../Base/StylingConstants";
 import { RChosenPiecesForm } from "../Forms/RChosenPiecesForm";
 import { PerformanceInit } from "../../data/Datastore/ModelsWeb/Performance/InitTypes";
+import { RPerformanceInit } from "../BasicRendering/RenderPerformance";
+import { StagedPerformance } from "./RAuditions";
+import { mapAsync } from "../../util/common/general/collections";
 
 /**
  * Auswahl der aktuellen Runde
@@ -20,80 +15,47 @@ import { PerformanceInit } from "../../data/Datastore/ModelsWeb/Performance/Init
  * Ruft das Performance-Formular auf, in dem weitere Performances des Competitors eingegeben werden können
  * 
  */
-export function RAuditionEditor() {
+type RAuditionEditorProps = {
+  competitor: DsParticipation
+  performances: StagedPerformance[]
+  repertoire: DsMusicPiece[],
+  onCancel: () => void
+}
+export function RAuditionEditor({competitor, performances, repertoire, onCancel}: RAuditionEditorProps) {
   const lg = ENGLISH;
 
-  const [currentRound, setCurrentRound] = useState<RoundDisplayIdType | "">("");
-  const [competitors, setCompetitors] = useState<DsParticipation[]>([]);
-  const [repertoire, setRepertoire] = useState<MusicPiece[]>([]);
-
-  const [currentCompetitor, setCurrentCompetitor] = useState<DsParticipation|undefined>(undefined);
-  const [chosenPieces, setChosenPieces] = useState<EChosenPiece[]>([])
-
-  const updateCurrentCompetitor = (did: string) => {
-    setCurrentCompetitor(competitors.find(comp => comp.displayId === did));
-  }
+  const [chosenPieces, setChosenPieces] = useState<EChosenPiece[]>([]);
+  const [savedPieces, setSavedPieces] = useState<PerformanceInit[]>([]); // CHANGE THIS TO DsPerformance[] !!!!!
 
   useEffect(() => {
     const load = async () => {
-      if (currentRound) {
-        const currentCompetitors = await getCompetitors(currentRound);
-        const musicPieces = await getRoundRepertoireStaged(lg, currentRound);
-        setCompetitors(currentCompetitors)
-        setCurrentCompetitor(undefined);
-        setRepertoire(musicPieces);
+      if (performances) {
+        setChosenPieces(await mapAsync(stageChosenPiece, performances));
       }
     }
     load();
-  },
-  [currentRound]);
-
-  useEffect(() => {
-    const load = async () => {
-      if (currentRound && currentCompetitor) {
-        const pfs = await getDsPerformances({competitorId: currentCompetitor.id});
-
-        const stagedPieces = await filteredMapAsync<DsPerformance, EChosenPiece>(async (performance: DsPerformance) => {
-            return await stageChosenPiece(performance);
-          },
-          pfs
-        );
-        setChosenPieces(stagedPieces)
-      }
-    }
-    load();
-  }, [currentCompetitor]);
+  }, [performances])
 
   return(
     <div>
 
-      <div>
-      <Select
-          style={{width: Styling.SELECT_WIDTH}}
-          onChange={(round) => { setCurrentRound(round); }}
-          options={RoundDisplayIds.map(did => ({value: did, label: did}))
-          }
-      />
-      </div>
-
-      {currentRound && competitors.length > 0
-        ? <div>
-            <Select
-              value={currentCompetitor ? currentCompetitor.displayId : ""}
-              style={{width: Styling.SELECT_WIDTH}}
-              onChange={(competitor: string) => { updateCurrentCompetitor(competitor); }}
-              options={competitors.map(c => ({value: c.displayId, label: c.displayId}))}
-            />
-          </div>
-        : <div />
-      }
-
-      {currentCompetitor
+      {competitor && chosenPieces
         ? <RChosenPiecesForm
               chosenPieces={chosenPieces}
               repertoire={repertoire}
-              onSubmit={ (performance: EChosenPiece) => {} }
+              onSubmit={async (chosenPieces: EChosenPiece[]) => {
+                const tmpPieces = await submitChosenPieces(competitor.id, chosenPieces);
+                setSavedPieces(tmpPieces);
+              }}
+              onCancel={onCancel}
           />
+        : <div />
+      }
+
+      {savedPieces
+        ? savedPieces.map((piece: PerformanceInit, i: number) => 
+            <div><RPerformanceInit performanceInit={piece} /></div>
+            )
         : <div />
       }
 
@@ -109,28 +71,10 @@ export function RAuditionEditor() {
   );
 }
 
-async function stageChosenPiece(performance: DsPerformance) : Promise<EChosenPiece|undefined> {
-
-  const lg = ENGLISH;
-
-  const {id, displayId, constituents} = performance;
-  const musicPiece = await xGetStaged<DsMusicPiece, MusicPiece>(lg, getDsMusicPiece, performance.musicPieceId, stageMusicPiece);
-
-  if (musicPiece) {
-    return({
-      id,
-      displayId: displayId || "",
-      musicPiece,
-      chosenConstituentsDids: constituents ? constituents.map(c => c.displayId) : []
-    }) as EChosenPiece  
-  }
-
-}
-
 export type EChosenPiece = {
   id: string
   displayId: string
-  musicPiece?: MusicPiece
+  musicPiece?: DsMusicPiece
   chosenConstituentsDids: string[]
 }
 
@@ -139,6 +83,14 @@ export function newEChosenPiece() : EChosenPiece {
     id: "",
     displayId: "",
     chosenConstituentsDids: []
+  })
+}
+
+async function stageChosenPiece(performance: StagedPerformance) : Promise<EChosenPiece> {
+  const {constituents} = performance;
+  return({
+    ...performance,
+    chosenConstituentsDids: constituents ? constituents.map(c => c.displayId) : []
   })
 }
 
@@ -153,19 +105,20 @@ export function newEChosenPiece() : EChosenPiece {
  * (*) Die Reihenfolge wird von chosenPieces übernommen und durch die DisplayId definiert
  * (*) Video-Links werden übernommen, wenn die Musikstücke und Konstituenten immer noch ausgewählt sind
  */
-async function submitChosenPieces(competitorId: string, chosenPieces: EChosenPiece[]) {
+async function submitChosenPieces(competitorId: string, chosenPieces: EChosenPiece[]) : Promise<PerformanceInit[]> { // !!!!!
   const dsPerformances = await getDsPerformances({competitorId});
-  chosenPieces.map((chosenPiece: EChosenPiece) => {
+  const result = chosenPieces.map((chosenPiece: EChosenPiece) => {
     const {musicPiece, chosenConstituentsDids} = chosenPiece;
     if (musicPiece) {
       const displayId = musicPiece.displayId; // GENERATE NEW DISPLAY ID !!!!!
       const performance = dsPerformances.find((p: DsPerformance) => p.musicPieceId === musicPiece.id);
       let dsConstituents = performance && performance.constituents || [];
       return mergePerformance(displayId, musicPiece, chosenConstituentsDids, dsConstituents)
-    }})
+  }});
+  return result.filter(el => (!! el)) as PerformanceInit[]
 }
 
-function mergePerformance(displayId: string, musicPiece: MusicPiece, constituentsDids: string[], dsConstituents: DsPerformedConstituent[]) : PerformanceInit {
+function mergePerformance(displayId: string, musicPiece: DsMusicPiece, constituentsDids: string[], dsConstituents: DsPerformedConstituent[]) : PerformanceInit {
   return({
     displayId,
     piece: musicPiece.id,

@@ -31,9 +31,9 @@ export function RSortableList<T>({items, onChange, render}: SortableListProps<T>
     return(
       <div>
         {items.map((item: T, i: number) => 
-          <div key={"sortableList-" + i}>
+          <div key={"sortableList-" + i} >
             <div className={'itc-row'}>
-              <Select options={options} value={i} onChange={(j: number) => shuffleItems(j, i)} />
+              <Select style={{height: 32, margin: 0 }}options={options} value={i} onChange={(j: number) => shuffleItems(j, i)} />
               <div>{render(item)}</div>
             </div>
           </div>

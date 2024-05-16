@@ -1,36 +1,35 @@
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import { MyBox } from "./MyBox";
-import { RButton } from "./Base";
+import { RIconButton, SubmitCancelButtons } from "./Buttons";
 
 type ConfirmDialogProps<T> = {
   data: T,
-  onSubmit: (data: T) => void
+  onSubmit: (data: T) => void,
+  onCancel?: () => void,
   disabled?: boolean,
   isModalOpen: boolean,
   setIsModalOpen: (flag: boolean) => void
   renderData: (data: T) => JSX.Element
 }
 
-export function ConfirmAndSubmit<T>({data, onSubmit, disabled, isModalOpen, setIsModalOpen, renderData}: ConfirmDialogProps<T>) {
-
-
+export function ConfirmAndSubmit<T>({data, onSubmit, onCancel, disabled, isModalOpen, setIsModalOpen, renderData}: ConfirmDialogProps<T>) {
 
   const copyToClipboardButton = 
-    <Button onClick={() => navigator.clipboard.writeText(JSON.stringify(data))}>Copy to Clipboard</Button>        
-
+    <RIconButton icon="copy" onClick={() => navigator.clipboard.writeText(JSON.stringify(data))} />
 
   return(
     <div>
-            <div style={{marginTop: 20}}>
-        <RButton
-          label="Submit"
-          onClick={() => { setIsModalOpen(true); }} 
+      <div style={{marginTop: 20}}>
+      
+        <SubmitCancelButtons
+          onSubmit={() => { setIsModalOpen(true); }}
+          onCancel={onCancel}
           disabled={!! disabled}
         />
       </div>
 
     <Modal
-      width={"90%"}
+//      width={"90%"}
       title="Confirm Save" 
       open={isModalOpen} 
       onOk={() => { onSubmit(data); setIsModalOpen(false); }}

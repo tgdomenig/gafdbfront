@@ -1,20 +1,21 @@
 
-import { MusicPiece } from "../Competition/StageMusicPiece";
 import { RChosenPieceForm } from "./RChosenPieceForm";
-import { RIconButton } from "../Base/Base";
+import { RIconButton } from "../Base/Buttons";
 import { useEffect, useState } from "react";
 import { EChosenPiece, newEChosenPiece } from "../Competition/RAuditionEditor";
 import { ConfirmAndSubmit } from "../Base/ConfirmAndSubmit";
-import { RChosenPiece, RChosenPieces } from "../BasicRendering/RMusicPiece";
+import { RChosenPiece } from "../BasicRendering/RMusicPiece";
 import { RSortableList } from "../Base/RSortableList";
+import { DsMusicPiece } from "../../models";
 
 type RChosenPiecesFormProps = {
   chosenPieces: EChosenPiece[], 
-  repertoire: MusicPiece[],
-  onSubmit: (session: EChosenPiece) => void
+  repertoire: DsMusicPiece[],
+  onSubmit: (chosenPieces: EChosenPiece[]) => void
+  onCancel: () => void
 }
 
-export function RChosenPiecesForm({chosenPieces, repertoire}: RChosenPiecesFormProps) {
+export function RChosenPiecesForm({chosenPieces, repertoire, onSubmit, onCancel}: RChosenPiecesFormProps) {
 
   const [currentPieces, setCurrentPieces] = useState<EChosenPiece[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,7 +53,8 @@ export function RChosenPiecesForm({chosenPieces, repertoire}: RChosenPiecesFormP
 
       <ConfirmAndSubmit<EChosenPiece[]> 
           data={currentPieces.filter(cp => (!! cp.musicPiece))} 
-          onSubmit={() => {}}
+          onSubmit={() => { onSubmit(currentPieces); }}
+          onCancel={onCancel}
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           renderData={(chosenPieces: EChosenPiece[]) => 
