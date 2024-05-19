@@ -7,7 +7,7 @@ import { RBoldText } from "../Base/Base";
 import { RDsMusicPiece, RMusicPieceLabel } from "./RMusicPiece";
 
 import { ENGLISH } from "../../util/common/language";
-import { StagedPerformance } from "../Competition/RAuditions";
+import { StagedPerformance } from "../Competition/RAuditionScreen";
 import { MusicPiece } from "../Competition/StageMusicPiece";
 import { Styling } from "../Base/StylingConstants";
 import { EConstituent, EVideoLink } from "../Competition/Types";
@@ -99,13 +99,13 @@ function RConstituent({musicPiece, constituent}: {musicPiece: DsMusicPiece, cons
 
 }
 
-function RVideoLink({videoLink}: {videoLink?: VideoLink | null}) {
+export function RVideoLink({videoLink}: {videoLink?: VideoLink | null}) {
   if (! videoLink) {
     return <div />;
   }
   else {
     const {platform, videoId, startTimeInSeconds} = videoLink;
-    console.log("videoLink", videoLink)
+
     return(
       <div style={{display: 'flex', flexDirection: 'row'}}>
         <div>Platform: {platform || "Youtube"}, </div>

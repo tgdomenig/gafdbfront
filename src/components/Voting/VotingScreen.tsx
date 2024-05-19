@@ -30,18 +30,6 @@ export function VotingScreen() {
 
       const voting = await xGetStaged<DsVoting, Voting>(ENGLISH, fGetDsVoting, _DISPLAY_ID_, stageVoting);
 
-      console.log("voting", voting)
-
-
-      // export async function xGetStaged<S, T>(
-      //   lg: LANGUAGE, 
-      //   getter: (idOrDisplayId: string) => Promise<S|undefined>,
-      //   idOrDisplayId: string,
-      //   stager: (lg: LANGUAGE, dsRec: S) => T | Promise<T>
-      // ) : Promise<T|undefined> {
-      
-
-      // const voting1 = await fGetDsVoting(_DISPLAY_ID_);
       if (voting) {
         setVoting(voting);
       }
@@ -52,12 +40,9 @@ export function VotingScreen() {
   []);
 
   const onSubmitTimeWindow = async (starts: Date, durationInMinutes: number) => {
-    console.log("startDateTime", starts);
-    console.log("durationInMinutes", durationInMinutes);
 
     if (voting) {
       const endDateTime = addMinutes(starts, durationInMinutes);
-      console.log(endDateTime);
 
       const updated = await xUpdate<VotingInit, DsVoting>(
         getDsVoting,
@@ -75,8 +60,6 @@ export function VotingScreen() {
     }
     return false;
   }
-
-
 
   return(
     <div>

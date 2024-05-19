@@ -10,10 +10,10 @@ export type ConfigItemInit = {
 
 export async function updateConfigItem(input: ConfigItemInit) : Promise<ConfigItem|undefined> {
   const {displayId, data} = input;
-  console.log("ConfigItemInit::input", input);
-  const original = await fGetConfigItem(displayId);
-  console.log("ConfigItemInit::original", original);
 
+  const original = await fGetConfigItem(displayId);
+
+  
   if (original) {
     const result = await DataStore.save(ConfigItem.copyOf(
       original,
@@ -22,12 +22,10 @@ export async function updateConfigItem(input: ConfigItemInit) : Promise<ConfigIt
           updated['data'] = data;
       }
     ));
-    console.log("ConfigItemInit::result", result);
+
     return result;
   }
   else {
-    console.log("CREATING ENTITY: ");
-    console.log("ITEM", new ConfigItem(input));
     return await DataStore.save(new ConfigItem(input));
   }
 }

@@ -97,13 +97,13 @@ export function ShortPostEditor() {
     };
 
     // saves new post or updates existing one, depending on whether id is falsy
-    xSaveOrUpdate<ShortPostInit, DsShortPost>(
-      getDSShortPost,
-      DsShortPost.copyOf,
-      saveShortPost,
-      id,
-      input
-    );
+    // xSaveOrUpdate<ShortPostInit, DsShortPost>(
+    //   getDSShortPost,
+    //   DsShortPost.copyOf,
+    //   saveShortPost,
+    //   id,
+    //   input
+    // );
   };
 
   const toJson = (pretty?: boolean) => {
@@ -201,6 +201,7 @@ function parseShortPostBody(text: string) : ShortPostBlock[] {
       result = result.concat(parseShortPostBodyParagraph(paragraph));
     }
   }
+
   return result;
 }
 

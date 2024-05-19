@@ -10,8 +10,8 @@ export async function xUpdate<S extends Displayable, T extends Displayable>(
     input: Partial<S>,
     newDisplayId?: string
   )  : Promise<T|undefined> {
-    const {...rest} = input;
-    let original = await xGet<T>(getter, idOrDisplayId);
+
+    let original = idOrDisplayId && await xGet<T>(getter, idOrDisplayId);
 
     if (original) {
       const result = await DataStore.save(copyFn(
@@ -27,7 +27,7 @@ export async function xUpdate<S extends Displayable, T extends Displayable>(
           }
         }
       ));
-      itcLog("xUpdate", original, result)
+
       return result;
     }
 }

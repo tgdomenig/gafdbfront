@@ -22,8 +22,6 @@ export function RSelectCompetitors({round, competitors, onSubmit, onCancel}: RSe
 
   const [eligibleCompetitors, setEligibleCompetitors] = useState<DsParticipation[]>([]);
 
-  type SelectOption = {label: string, value: string};
-
   const [selection, setSelection] = useState<string[]>(competitors.map(c => c.missionId));
   const [isModalOpen, setIsModalOpen] = useState(false);
 

@@ -26,8 +26,11 @@ export function RBoldText({text}: {text: string}) {
   )
 }
 
-
 export function filterNull<T>(l: (T|null|undefined)[]) : T[] {
   // @ts-ignore
   return l.filter(x => (!! x))
 }
+
+export function RVSpace() {
+  return <div style={{marginBottom: 20}} />
+ }

@@ -69,8 +69,8 @@ function RSignIn({handleSignIn}: {handleSignIn: (args: SignInInput) => void}) {
   const [password, setPw] = useState<string>("");
 
   const handleSubmit = () => {
-    console.log(`username: ${username}`);
-    console.log(`pw: ${password}`);
+    // console.log(`username: ${username}`);
+    // console.log(`pw: ${password}`);
     handleSignIn({username, password})
   }
 

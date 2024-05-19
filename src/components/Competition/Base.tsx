@@ -1,4 +1,4 @@
-import { Select } from "antd";
+import { Radio, RadioChangeEvent, Select } from "antd";
 import { Styling } from "../Base/StylingConstants";
 import { RoundDisplayIdType, RoundDisplayIds } from "../Base/Helpers";
 
@@ -8,11 +8,12 @@ type SelectRoundProps = {
 }
 
 export function SelectRound({onChange}: SelectRoundProps) {
+
+  const options = RoundDisplayIds.map(did => ({value: did, label: did}));
+
   return(
-    <Select
-      style={{minWidth: Styling.SCREEN_WIDTH}}
-      onChange={onChange}
-      options={RoundDisplayIds.map(did => ({value: did, label: did}))}
-    />
+    <div style={{marginBottom: 20}}>
+      <Radio.Group optionType="button" buttonStyle="solid" options={options} onChange={({ target: { value } }: RadioChangeEvent) => onChange(value)} />
+    </div>
   )
 }

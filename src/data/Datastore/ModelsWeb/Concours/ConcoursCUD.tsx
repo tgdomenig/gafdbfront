@@ -156,7 +156,7 @@ export async function deleteConcoursAndDependencies(yearOfConcours: string) {
 
     for (var perf of performancesToDelete) {
       await DataStore.delete(perf);
-    }    
+    }
     console.log(performancesToDelete.length + " performances deleted")
 
 

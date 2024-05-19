@@ -1,17 +1,15 @@
-import React, { useContext, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { Layout, Typography } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 
 import HasDatastore from './components/Base/HasDatastore';
 import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
 import { NavigationMenu, NavigationRoutes } from './components/Base/Navigation';
-import { AppConfig } from './AppConfig';
 
 import './App.css';
 // import './AppConfig.css';
 import RestrictedAdmin from './components/Base/RestrictedAdmin';
-import { Context } from './util/dbFront/Context';
+import { Styling } from './components/Base/StylingConstants';
 
 Amplify.configure(awsconfig);
 
@@ -21,6 +19,29 @@ function App() {
 //  const {datastoreSynced} = useContext(Context)
 
   return (
+    <ConfigProvider
+      theme={{
+        components: {
+          Button: {
+            colorPrimary: Styling.PRIMARY_COLOR,
+            algorithm: true, // Enable algorithm
+          },
+          Input: {
+            colorPrimary: Styling.SECONDARY_COLOR,
+            algorithm: true, // Enable algorithm
+          }
+    
+        },
+        token: {
+          // Seed Token
+          colorPrimary: '#254e5c',
+  //        borderRadius: 2,
+
+          // Alias Token
+  //        colorBgContainer: '#f6ffed',
+        },
+      }}
+    >
       <Router>
         <Layout>
         <Header className="header">
@@ -38,7 +59,7 @@ function App() {
         <Footer />
       </Layout>
     </Router>
-      
+    </ConfigProvider>
   );
 }
 

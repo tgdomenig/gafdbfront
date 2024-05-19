@@ -17,7 +17,7 @@ import { VideoCameraOutlined } from "@ant-design/icons";
 import { RVideoLinks } from "./RVideoLinks";
 import { RStagedPerformance } from "../BasicRendering/RenderPerformance";
 
-export function RAuditions() {
+export function RAuditionScreen() {
   const lg = ENGLISH;
 
   const [currentRoundDid, setCurrentRoundDid] = useState<RoundDisplayIdType | "">("");
@@ -81,24 +81,26 @@ function RAudition({competitor, repertoire}: RAuditionProps) {
 
   const [performances, setPerformances] = useState<StagedPerformance[]>([])
   const [mode, setMode] = useState<"show"|"edit"|"videolinks">("show")
+  const [triggerReload, setTriggerReload] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       if (competitor) {
+        let stagedPieces = [] as StagedPerformance[];
         const pfs = await getDsPerformances({competitorId: competitor.id});
         if (pfs.length > 0) {
-          const stagedPieces = await filteredMapAsync<DsPerformance, StagedPerformance>(async (performance: DsPerformance) => {
+          stagedPieces = await filteredMapAsync<DsPerformance, StagedPerformance>(async (performance: DsPerformance) => {
               return await stageDsPerformance(performance);
             },
             pfs
           );
-          setPerformances(stagedPieces)
         }
+        setPerformances(stagedPieces)
       }
+      setMode("show");
     }
     load();
-    setMode("show");
-  }, [competitor]);
+  }, [competitor, triggerReload]);
 
   if (mode === "edit") {
     return(
@@ -107,6 +109,7 @@ function RAudition({competitor, repertoire}: RAuditionProps) {
               competitor={competitor} 
               performances={performances} 
               repertoire={repertoire}
+              onDbSave={() => { setTriggerReload(! triggerReload); }}
               onCancel={() => { setMode("show"); }} 
         />
       </MyBox>
@@ -115,8 +118,10 @@ function RAudition({competitor, repertoire}: RAuditionProps) {
   else if (mode === "show") {
     return(
       <MyBox 
-        toTheRight={<RIconButton icon="edit" onClick={() => { setMode("edit"); }} />}
-        toTheBottomRight={<RIconButton icon={"edit-video"} onClick={() => {setMode("videolinks")}}/>}>
+        toTheRight={[
+        <RIconButton icon="edit" onClick={() => { setMode("edit"); }} />,
+        <RIconButton icon={"edit-video"} onClick={() => {setMode("videolinks")}}/>
+      ]}>
 
         {performances.map((pf: StagedPerformance, i: number) =>
           <div key={"chosen-piece-"+i}>
@@ -132,6 +137,7 @@ function RAudition({competitor, repertoire}: RAuditionProps) {
       <RVideoLinks
           performances={performances}
           onCancel={() => { setMode("show"); }}
+          onDbSave={() => { setTriggerReload(! triggerReload); }}
       />
     )
   }

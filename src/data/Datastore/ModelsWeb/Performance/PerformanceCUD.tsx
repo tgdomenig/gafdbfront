@@ -9,10 +9,22 @@ import { fGetDsMusicPiece } from '../../ModelsCommon/MusicPiece/MusicPieceR';
 
 export async function savePerformance(participation: DsParticipation, input: PerformanceInit) : Promise<DsPerformance> {
   const mp = await xGet<DsMusicPiece>(fGetDsMusicPiece, input.piece);
+  
 
-  return await DataStore.save(new DsPerformance({
+  return await saveDsPerformace({
     playedBy: participation.id,
     musicPieceId: mp.id,
     ...input
-  }));
+  });
 }
+
+export type DsPerformanceInit = PerformanceInit & {
+  id?: string,
+  playedBy: string,
+  musicPieceId: string
+}
+
+export async function saveDsPerformace(input: DsPerformanceInit) : Promise<DsPerformance> {
+  return await DataStore.save(new DsPerformance(input));
+}
+

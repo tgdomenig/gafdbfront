@@ -4,8 +4,15 @@ import { RoundDisplayIdType } from "../Base/Helpers";
 import { ESession } from "../Forms/RSessionForm";
 import { RenderESession } from "../BasicRendering/RSession";
 import { MyBox } from "../Base/MyBox";
-import { RSessionEditor } from "./RSessionEditor";
+import { EditSession } from "./EditSession";
 import { RIconButton } from "../Base/Buttons";
+import { xSaveOrUpdate } from "../../data/Datastore/ModelsWeb/Base/xSaveOrUpdate";
+import { getDsSession } from "../../data/Datastore/ModelsCommon/Session/SessionR";
+import { DataStore } from "@aws-amplify/datastore";
+import { DsSession } from "../../models";
+import { SessionInit } from "../../data/Datastore/ModelsWeb/Session/InitTypes";
+import { format } from "date-fns";
+import { saveSession } from "../../data/Datastore/ModelsWeb/Session/SessionCUD";
 
 /**
  * Auswahl der aktuellen Runde
@@ -13,9 +20,47 @@ import { RIconButton } from "../Base/Buttons";
  * Ruft das Sessions-Formular auf
  * 
  */
-export function RSession({roundDid, session}: {roundDid: RoundDisplayIdType, session: ESession}) {
+export function RSession({roundDid, session, onDbSave}: {roundDid: RoundDisplayIdType, session: ESession, onDbSave: () => void}) {
 
   const [isEditMode, setEditMode] = useState(false);
+
+
+  const updateSession = async (session: ESession) => {
+
+    const {id, date, start, end} = session;
+    const sessionInit : SessionInit = {
+      sessionName: "", // not used anymore
+      date: format(date, "yyyy-MM-dd"),
+      start: format(start, "hh:mm:ss"),
+      end: format(end, "hh:mm:ss"),
+      concoursRoundDisplayId: roundDid,
+      competitors: session.competitors // SIND DAS DIE RICHTIGEN DISPLAY-IDS? !!!!!!
+    }
+
+    // Note: Sessions have a displayId (which is actually not used anymore). The displayId is created in saveSession and therefore missing in SessionInit.
+    // Here, as a hack, we add the displayId to the interface to be able to use xSaveOrUpdate
+
+    await xSaveOrUpdate<SessionInit & {displayId: string}, DsSession>(
+      getDsSession,
+      DsSession.copyOf,
+      saveSession,
+      session.id,
+      {...sessionInit, displayId: ""}
+    );
+    onDbSave();
+  }
+
+  /*
+export type SessionInit = {
+  date: string,
+  start: string,
+  end: string,
+  concoursRoundDisplayId: string,
+  sessionName: string,
+  competitors: string[]
+}
+  */
+
 
   useEffect(() => {
     setEditMode(false);
@@ -23,10 +68,10 @@ export function RSession({roundDid, session}: {roundDid: RoundDisplayIdType, ses
 
   if (isEditMode) {
     return(
-      <RSessionEditor 
+      <EditSession 
           roundDid={roundDid}
           session={session}
-          onSubmit={ (sn: ESession) => { setEditMode(false) } }
+          onSubmit={ (sn: ESession) => { updateSession(sn); setEditMode(false) } } // SAVE SESSION HERE !!!!!!
           onCancel={ () => { setEditMode(false) } }
       />
     );

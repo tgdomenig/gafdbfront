@@ -4,11 +4,11 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 
 import { Menu } from 'antd';
 import { VotingScreen } from '../Voting/VotingScreen';
-import { RShortPosts } from '../ShortPosts/RShortPosts';
-import { RCompetitors } from '../Competition/RCompetitors';
-import { RSessions } from '../Competition/RSessions';
-import { RAuditions } from '../Competition/RAuditions';
-import { ConcoursConfig } from '../ConcoursConfig/ConcoursConfig';
+import { RShortPostsScreen } from '../ShortPosts/RShortPostsScreen';
+import { RCompetitorsScreen } from '../Competition/RCompetitorsScreen';
+import { RSessionsScreen } from '../Competition/RSessionsScreen';
+import { RAuditionScreen } from '../Competition/RAuditionScreen';
+import { EditConcoursConfig } from '../ConcoursConfig/ConcoursConfigAlt';
 
 
 export function NavigationMenu() {
@@ -29,11 +29,11 @@ return(
 export function NavigationRoutes() {
 return(
   <Routes>
-    <Route path="/concours-config" Component={ConcoursConfig} />
-    <Route path="/short-posts" Component={RShortPosts} />
-    <Route path="/rounds" Component={RCompetitors} />
-    <Route path="/sessions" Component={RSessions} />
-    <Route path="/auditions" Component={RAuditions} />
+    <Route path="/concours-config" Component={EditConcoursConfig} />
+    <Route path="/short-posts" Component={RShortPostsScreen} />
+    <Route path="/rounds" Component={RCompetitorsScreen} />
+    <Route path="/sessions" Component={RSessionsScreen} />
+    <Route path="/auditions" Component={RAuditionScreen} />
     <Route path="/voting" Component={VotingScreen} />
   </Routes>
 );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Descriptions } from "antd";
 import { Voting } from "../../data/Datastore/ModelsCommon/Voting/Types";
+import { getAllVotes } from "../../data/Datastore/ModelsWeb/Vote/VoteR";
 
 type VoteStats = {
   choice: string,
@@ -13,9 +14,9 @@ export function RVotingStats({voting}: {voting: Voting}) {
 
   const fetchVotes = async () => {
     if (voting) {
-//      const actualVotes = await getAllVotes(voting.id);
+      const actualVotes = await getAllVotes(voting.id);
   
-      const actualVotes = [
+      const actualVotesfake = [
         {choice: "A"},
         {choice: "B"},
         {choice: "A"},
@@ -37,11 +38,17 @@ export function RVotingStats({voting}: {voting: Voting}) {
         {choice: "C"}
       ];
 
-
       const newStats = new Map<string, number>();
-      for (const {choice} of actualVotes) {
-        const n = newStats.get(choice) || 0;
-        newStats.set(choice, n + 1);
+      for (var {choice} of actualVotes) {
+        if (choice) {
+          const n = newStats.get(choice);
+          if (n) {
+            newStats.set(choice, n + 1);
+          }
+          else {
+            newStats.set(choice, 1);
+          }
+        }
       }
 
       const asArray = Array.from(newStats, ([choice, nbVotes]) => ({choice, nbVotes}));
@@ -58,6 +65,7 @@ export function RVotingStats({voting}: {voting: Voting}) {
           ? <RStatistics stats={stats} />
           : <div />
       }
+
       <Button onClick={fetchVotes}>Fetch Votes</Button>
     </div>
   );
@@ -71,7 +79,11 @@ function RStatistics({stats}: {stats: VoteStats[]}) {
                     size="small"
                     bordered={true}
        >
-        {stats.map(({choice, nbVotes}) => <Descriptions.Item label={choice} >{nbVotes}</Descriptions.Item>)}
+        {stats.map(({choice, nbVotes}: VoteStats, i: number) => {
+          return(
+            <Descriptions.Item label={choice} >{nbVotes}</Descriptions.Item>
+          )
+          })}
       </Descriptions>
     </div>
   )

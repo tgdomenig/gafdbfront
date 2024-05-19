@@ -1,5 +1,6 @@
 import { Button } from "antd";
 import { CopyOutlined, DeleteOutlined, EditOutlined, EnterOutlined, PlusCircleOutlined, VideoCameraAddOutlined } from "@ant-design/icons";
+import { Styling } from "./StylingConstants";
 
 type RButtonProps = {
   icon?: JSX.Element
@@ -73,7 +74,7 @@ export type RIconButtonProps = {
 export function RIconButton({ label, onClick, disabled, icon, size }: RIconButtonProps) {
 
   const effSize = size === "big" ? 32 : 24;
-  const style = { fontSize: effSize };
+  const style = { fontSize: effSize, color: Styling.PRIMARY_COLOR };
   let iconElement;
   switch (icon) {
     case "add": iconElement = <PlusCircleOutlined style={style} />; break;

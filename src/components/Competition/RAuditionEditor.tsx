@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { DsMusicPiece, DsParticipation, DsPerformance, DsPerformedConstituent } from "../../models";
-import { getDsPerformances } from "../../data/Datastore/ModelsCommon/Performance/PerformanceR";
+import { DsMusicPiece, DsParticipation, DsPerformance, DsPerformedConstituent, VideoLink } from "../../models";
+import { getDsPerformance, getDsPerformances } from "../../data/Datastore/ModelsCommon/Performance/PerformanceR";
 import { ENGLISH } from "../../util/common/language";
 import { RChosenPiecesForm } from "../Forms/RChosenPiecesForm";
-import { PerformanceInit } from "../../data/Datastore/ModelsWeb/Performance/InitTypes";
-import { RPerformanceInit } from "../BasicRendering/RenderPerformance";
-import { StagedPerformance } from "./RAuditions";
-import { mapAsync } from "../../util/common/general/collections";
+import { StagedPerformance } from "./RAuditionScreen";
+import { filteredMapAsync, mapAsync } from "../../util/common/general/collections";
+import { filterNull } from "../Base/Base";
+import { xDelete } from "../../data/Datastore/ModelsWeb/Base/xDelete";
+import { DsPerformanceInit, saveDsPerformace, savePerformance } from "../../data/Datastore/ModelsWeb/Performance/PerformanceCUD";
+import { itcAssert } from "../../util/common/general/tests";
+import { xSaveOrUpdate } from "../../data/Datastore/ModelsWeb/Base/xSaveOrUpdate";
 
 /**
  * Auswahl der aktuellen Runde
@@ -19,13 +22,14 @@ type RAuditionEditorProps = {
   competitor: DsParticipation
   performances: StagedPerformance[]
   repertoire: DsMusicPiece[],
+  onDbSave: () => void,
   onCancel: () => void
 }
-export function RAuditionEditor({competitor, performances, repertoire, onCancel}: RAuditionEditorProps) {
+
+export function RAuditionEditor({competitor, performances, repertoire, onDbSave, onCancel}: RAuditionEditorProps) {
   const lg = ENGLISH;
 
   const [chosenPieces, setChosenPieces] = useState<EChosenPiece[]>([]);
-  const [savedPieces, setSavedPieces] = useState<PerformanceInit[]>([]); // CHANGE THIS TO DsPerformance[] !!!!!
 
   useEffect(() => {
     const load = async () => {
@@ -44,18 +48,11 @@ export function RAuditionEditor({competitor, performances, repertoire, onCancel}
               chosenPieces={chosenPieces}
               repertoire={repertoire}
               onSubmit={async (chosenPieces: EChosenPiece[]) => {
-                const tmpPieces = await submitChosenPieces(competitor.id, chosenPieces);
-                setSavedPieces(tmpPieces);
+                await dbUpdatePerformances(competitor, chosenPieces);
+                onDbSave();
               }}
               onCancel={onCancel}
           />
-        : <div />
-      }
-
-      {savedPieces
-        ? savedPieces.map((piece: PerformanceInit, i: number) => 
-            <div><RPerformanceInit performanceInit={piece} /></div>
-            )
         : <div />
       }
 
@@ -94,66 +91,135 @@ async function stageChosenPiece(performance: StagedPerformance) : Promise<EChose
   })
 }
 
-/**
- * Es gibt hier verschiedene Fälle:
- * (*) Bereits bestehende Performances wurden umsortiert
- * (*) Bei bestehenden Performances wurde das Musikstück gewechselt
- * (*) Bestehende Performances wurden gelöscht
- * (*) Neue Performances wurden hinzugefügt
- * 
- * Die Update-Strategie ist wie folgt
- * (*) Die Reihenfolge wird von chosenPieces übernommen und durch die DisplayId definiert
- * (*) Video-Links werden übernommen, wenn die Musikstücke und Konstituenten immer noch ausgewählt sind
- */
-async function submitChosenPieces(competitorId: string, chosenPieces: EChosenPiece[]) : Promise<PerformanceInit[]> { // !!!!!
-  const dsPerformances = await getDsPerformances({competitorId});
-  const result = chosenPieces.map((chosenPiece: EChosenPiece) => {
-    const {musicPiece, chosenConstituentsDids} = chosenPiece;
+async function dbUpdatePerformances(competitor: DsParticipation, chosenPieces: EChosenPiece[]) {
+
+  const dsPerformances = await getDsPerformances({competitorId: competitor.id});
+
+  // Delete performances which are no longer chosen
+  for (var dsPerformance of dsPerformances) {
+    if (! chosenPieces.find(chosenPiece => chosenPiece.musicPiece && chosenPiece.musicPiece.id === dsPerformance.musicPieceId)) {
+      await xDelete(getDsPerformance, dsPerformance.id);
+    }
+  }
+  
+  let ix = 0;
+  let result = chosenPieces.map((chosenPiece: EChosenPiece) => {
+    const {musicPiece} = chosenPiece;
     if (musicPiece) {
-      const displayId = musicPiece.displayId; // GENERATE NEW DISPLAY ID !!!!!
-      const performance = dsPerformances.find((p: DsPerformance) => p.musicPieceId === musicPiece.id);
-      let dsConstituents = performance && performance.constituents || [];
-      return mergePerformance(displayId, musicPiece, chosenConstituentsDids, dsConstituents)
-  }});
-  return result.filter(el => (!! el)) as PerformanceInit[]
-}
+      const displayId = competitor.displayId + '|Pf ' + ix;
+      ix += 1;
 
-function mergePerformance(displayId: string, musicPiece: DsMusicPiece, constituentsDids: string[], dsConstituents: DsPerformedConstituent[]) : PerformanceInit {
-  return({
-    displayId,
-    piece: musicPiece.id,
-    constituents: constituentsDids.map(did => {
-      const dsConstituent = dsConstituents.find(c => c.displayId === did);
-      if (dsConstituent) {
-        const vl = dsConstituent.videoLink;
-
-        let videoLink;
-        if (vl) {
-          const {platform, videoId, startTimeInSeconds} = dsConstituent.videoLink;
-          if (platform && videoId && startTimeInSeconds) {
-            videoLink = {
-              platform: platform === "YOUTUBE" ? "YOUTUBE" : "VIMEO" as "YOUTUBE" | "VIMEO",
-              videoId: videoId,
-              startTimeInSeconds: startTimeInSeconds  
-            }
-          }
-        }
-        return({
-          displayId: did,
-          videoLink
-        })
+      const dsPerformance = dsPerformances.find((p: DsPerformance) => p.musicPieceId === musicPiece.id);
+      if (dsPerformance) {
+        return mergeWithDsPerformance(displayId, musicPiece, chosenPiece, dsPerformance);
       }
       else {
-        return { displayId: did }
+        // Note: we pass musicPiece because in chosenPiece it is set as optional even though we know here that it's there
+        return newPerformanceInit(competitor, displayId, musicPiece, chosenPiece);
       }
-    })
-  })
+    }
+  });
+
+ 
+  return await filteredMapAsync<DsPerformanceInit, DsPerformance>(async (input: DsPerformanceInit) => {
+      // @ts-ignore
+      await xSaveOrUpdate<DsPerformanceInit, DsPerformance>(
+        getDsPerformance,
+        DsPerformance.copyOf,
+        saveDsPerformace,
+        input.id,
+        input,
+        input.displayId
+      );
+    },
+    filterNull(result)
+  );
 }
+
+function mergeWithDsPerformance(displayId: string, musicPiece: DsMusicPiece, chosenPiece: EChosenPiece, dsPerformance: DsPerformance) : DsPerformanceInit {
+
+  const {chosenConstituentsDids} = chosenPiece;
+  if (chosenConstituentsDids) {
+    // Constituent case
+    let constituentsInit;
+    const dsConstituents = dsPerformance.constituents;
+    if (dsConstituents) {
+      constituentsInit = chosenConstituentsDids.map(did => {
+        const constituent = dsConstituents.find(c => c.displayId === did);
+        if (constituent) {
+          const {videoLink} = constituent;
+          return {
+            displayId: did,
+            videoLink: {...videoLink}
+          }
+        }
+        return {displayId: did}
+      });
+    }
+    else {
+      // this should actually not happen because if a music piece has constituents, performances should always have them also
+      constituentsInit = chosenConstituentsDids.map(did => ({displayId: did}));
+    }
+    return {
+      id: dsPerformance.id, // wichtig! sonst wird save aufgerufen statt update
+      displayId, 
+      piece: musicPiece.displayId, 
+      musicPieceId: musicPiece.id, 
+      constituents: constituentsInit,
+      playedBy: dsPerformance.playedBy
+    };
+  }
+  else {
+    // Non-constituents case
+    const {videoLink} = dsPerformance;
+    return {
+      displayId, 
+      piece: musicPiece.displayId, 
+      musicPieceId: musicPiece.id, 
+      videoLink: makeVideoLinkInit(videoLink),
+      playedBy: dsPerformance.playedBy
+    }
+  }
+}
+
+function makeVideoLinkInit(videoLink: VideoLink | null | undefined) {
+  if (videoLink) {
+    const {platform, videoId, startTimeInSeconds} = videoLink;
+    return {
+      platform: platform === "YOUTUBE" ? "YOUTUBE" : "VIMEO" as "YOUTUBE" | "VIMEO",
+      videoId: videoId || "",
+      startTimeInSeconds: startTimeInSeconds || 0
+    }
+  }
+}
+
+
+
+function newPerformanceInit(competitor: DsParticipation, displayId: string, musicPiece: DsMusicPiece, chosenPiece: EChosenPiece) {
+  const {chosenConstituentsDids} = chosenPiece;
+  return {
+    displayId,
+    piece: musicPiece.displayId,
+    constituents: chosenConstituentsDids ? chosenConstituentsDids.map(did => ({displayId: did})) : undefined,
+    musicPieceId: musicPiece.id,
+    playedBy: competitor.id
+  }
+}
+
 
 
 /*
 
 import { VideoLinkInit } from "../../ModelsCommon/Performance/Types"
+
+export type EChosenPiece = {d
+  id: string
+  displayId: string
+  musicPiece?: DsMusicPiece
+  chosenConstituentsDids: string[]
+}
+
+
 
 export type PerformanceInit = {
   displayId: string,

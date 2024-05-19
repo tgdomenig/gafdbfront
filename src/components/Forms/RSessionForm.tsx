@@ -19,6 +19,8 @@ type RSelectProps = {
 }
 
 export type ESession = { // "E" for "edit"
+  id: string,
+  displayId: string,
   sessionName: string,
   date: Date,
   start: Date

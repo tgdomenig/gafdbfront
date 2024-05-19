@@ -6,6 +6,7 @@ import { Voting } from "../../data/Datastore/ModelsCommon/Voting/Types";
 import DateFnsPicker from "../Base/DateFnsPicker";
 import { Button, Descriptions, InputNumber, Modal } from "antd";
 import TimeFnsPicker from "../Base/TimeFnsPicker";
+import { format, formatDate, parse } from "date-fns";
 
 type VotingTimeWindowEditorProps = {
   voting: Voting,
@@ -14,13 +15,15 @@ type VotingTimeWindowEditorProps = {
 
 export function VotingTimeWindowEditor({voting, onSubmitTimeWindow}: VotingTimeWindowEditorProps) {
 
-  const [startDateTime, setStartDateTime] = useState<Date|undefined>(voting.starts);
+  const [startDate, setStartDate] = useState<Date|undefined>(voting.starts);
+  const [startTime, setStartTime] = useState<Date|undefined>(voting.starts);
+
   const [durationInMinutes, setDurationInMinutes] = useState<number|undefined>(getDurationInMinutes(voting.starts, voting.terminates));
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onSubmit = async () => {
-    if (startDateTime && durationInMinutes) {
-      const success = await onSubmitTimeWindow(startDateTime, durationInMinutes);
+    if (startDate && startTime && durationInMinutes) {
+      const success = await onSubmitTimeWindow(mergeDateAndTime(startDate, startTime), durationInMinutes);
       setIsModalOpen(false);
     }
   }
@@ -39,19 +42,20 @@ export function VotingTimeWindowEditor({voting, onSubmitTimeWindow}: VotingTimeW
           width={"90%"}
           title="Edit Voting Time Window"
           open={isModalOpen} 
-          onOk={onSubmit} 
+          onOk={onSubmit}
+          okButtonProps={{disabled: ! (startDate && startTime && durationInMinutes)}}
           onCancel={ () => setIsModalOpen(false) }>
 
             <SubSubTitle title="Start Date and Time" />
             <div className="itc-row">
               <DateFnsPicker
-                defaultValue={startDateTime} 
-                onChange={(newDate) => setStartDateTime(newDate)}
+                defaultValue={startDate} 
+                onChange={(newDate) => setStartDate(newDate)}
               />
 
               <TimeFnsPicker 
-                defaultValue={startDateTime}
-                onChange={(newDate) => setStartDateTime(newDate)}
+                defaultValue={startDate}
+                onChange={(newDate) => setStartTime(newDate)}
               />
 
             </div>
@@ -64,6 +68,17 @@ export function VotingTimeWindowEditor({voting, onSubmitTimeWindow}: VotingTimeW
 
     </div>
   );
+}
+
+function mergeDateAndTime(date1: Date, date2: Date) {
+  const dayFromFirstDate = format(date1, 'yyyy-MM-dd');
+  const timeFromSecondDate = format(date2, 'HH:mm:ss');
+
+  // Combine the components into a new date string
+  const combinedDateString = `${dayFromFirstDate}T${timeFromSecondDate}`;
+
+  // Parse the new date string back into a Date object
+  return parse(combinedDateString, "yyyy-MM-dd'T'HH:mm:ss", new Date());
 }
 
 function RVotingTimeWindow({voting}: {voting: Voting}) {

@@ -18,7 +18,7 @@ type RSessionEditorProps = {
   onSubmit: (s: ESession) => void
   onCancel: () => void
 }
-export function RSessionEditor({roundDid, session, onSubmit, onCancel}: RSessionEditorProps) {
+export function EditSession({roundDid, session, onSubmit, onCancel}: RSessionEditorProps) {
 
   const [competitors, setCompetitors] = useState<DsParticipation[]>([]);
 

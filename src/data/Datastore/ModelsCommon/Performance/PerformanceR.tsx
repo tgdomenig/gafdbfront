@@ -29,7 +29,7 @@ export async function getActualDsPerformances(props: getDsPerformancesProps) : P
 */
 
 export async function getDsPerformances({musicPieceId, competitorId}: getDsPerformancesProps) : Promise<DsPerformance[]> {
-  console.log("musicPieceId, competitorId", musicPieceId, competitorId)
+
   if (musicPieceId) {
     return await _getMusicPiecePerformances(musicPieceId);
   }
@@ -58,9 +58,7 @@ const _getMusicPiecePerformances = async (musicPieceId: string) : Promise<DsPerf
 
 const _getCompetitorPerformances = async (competitorId: string) : Promise<DsPerformance[]> => 
   {
-    console.log("_getCompetitorPerformances: competitorId", competitorId)
     const result = await DataStore.query(DsPerformance, perfmnce => perfmnce.playedBy.eq(competitorId));
-    console.log("_getCompetitorPerformances: result", result)
     return result || []
 
 
