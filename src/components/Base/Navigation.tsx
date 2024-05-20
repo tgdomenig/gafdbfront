@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes, Link, Navigate } from 'react-router-dom';
 
 import { Menu } from 'antd';
 import { VotingScreen } from '../Voting/VotingScreen';
@@ -13,8 +13,7 @@ import { EditConcoursConfig } from '../ConcoursConfig/ConcoursConfigAlt';
 
 export function NavigationMenu() {
 return(
-  <Menu mode="horizontal" style={{minWidth: 800}} // theme="dark" defaultSelectedKeys={['2']}
-  
+  <Menu mode="horizontal" style={{minWidth: 800}} // theme="dark" defaultSelectedKeys={['2']} 
 >
   <Menu.Item key="concours-config"><Link to="/concours-config">Concours Config</Link></Menu.Item>
   <Menu.Item key="short-posts"><Link to="/short-posts">Short Posts</Link></Menu.Item>
@@ -29,6 +28,7 @@ return(
 export function NavigationRoutes() {
 return(
   <Routes>
+    <Route path="/" Component={() => <Navigate to="/concours-config" />} />
     <Route path="/concours-config" Component={EditConcoursConfig} />
     <Route path="/short-posts" Component={RShortPostsScreen} />
     <Route path="/rounds" Component={RCompetitorsScreen} />

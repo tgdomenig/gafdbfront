@@ -44,7 +44,6 @@ function getRepertoireDids(concoursRoundId: RoundDisplayIdType): string[] {
   // @ts-ignore
   range.sort((i: number, j: number) => (sortStrings[i] && sortStrings[j] && sortStrings[i] < sortStrings[j]) ? -1 : 1);
 
-  console.log(range.map(j => rep[j]));
   return range.map(j => rep[j]);
   
 }

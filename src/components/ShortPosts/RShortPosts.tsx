@@ -9,7 +9,7 @@ import { fmtDate } from "../../util/common/dateTime/Localized";
 import { RIconButton } from "../Base/Buttons";
 import { MyBox } from "../Base/MyBox";
 import { EditShortPost } from "./EditShortPost";
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import { xDelete } from "../../data/Datastore/ModelsWeb/Base/xDelete";
 
 export function RShortPosts({triggerReload}: {triggerReload?: boolean}) {
@@ -30,12 +30,15 @@ export function RShortPosts({triggerReload}: {triggerReload?: boolean}) {
   return(
       <div>
         <div>
-          {data.map((post: ShortPost, i: number) => {
-            return <RShortPost 
+          {data.map((post: ShortPost, i: number) => 
+            <div key={"short-post-" + i}>
+              <RShortPost 
                       post={post} 
                       onUpdate={ () => { setAnotherTriggerReload(! anotherTriggerReload); } }
                     />
-          })}
+              </div>
+          )}
+
         </div>
       </div>
   );
@@ -122,19 +125,19 @@ export function RenderShortPost({title, publishDate, blocks}: {title: string, pu
 
 function RShortPostBlock({ block }: { block: ShortPostBlock; }) {
   const { modifier, text, newPar } = block;
+  const style = newPar ? {marginTop: 8} : {};
   let s;
   switch (modifier) {
-    case "txt": s = <div>{text}</div>; break;
-    case "b": s = <div>&#x2022; {text}</div>; break;
+    case "b": 
+      return <div style={style}>&#x2022; {text}</div>;
     case "vl": 
       const {videoId, startTimeInSeconds} = JSON.parse(text);
-      s = <div>Video link with id {videoId} starting at {startTimeInSeconds} seconds</div>;
-      break;
+      return <div style={style}>{`Video link: {videoId: ${videoId}, startTimeInSeconds: ${startTimeInSeconds}}`}</div>;
     case "wl": 
       const {label, url} = JSON.parse(text);
-      s = <div>web link with label {label} and url {url}</div>;
-      break;
+      return <div style={style}>{`Web link: {label: ${label}, url ${url}`}</div>;
+    default: 
+      return <div style={style}>{text}</div>;
   }
-  return (newPar ? <p>{s}</p> : <div>{s}</div>);
 }
 

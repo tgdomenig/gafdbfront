@@ -20,7 +20,6 @@ export function RSortableList<T>({items, onChange, render}: SortableListProps<T>
   const [options, setOptions] = useState<{label: number, value: number}[]>([]);
 
   const shuffleItems = (toIx: number, fromIx: number) => { 
-    console.log(`changing ${fromIx} to ${toIx}`);
 
     const newIxs = shuffleIxs(options.map(opt => opt.value), fromIx, toIx);
     

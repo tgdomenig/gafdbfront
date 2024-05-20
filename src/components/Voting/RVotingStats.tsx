@@ -81,7 +81,7 @@ function RStatistics({stats}: {stats: VoteStats[]}) {
        >
         {stats.map(({choice, nbVotes}: VoteStats, i: number) => {
           return(
-            <Descriptions.Item label={choice} >{nbVotes}</Descriptions.Item>
+            <Descriptions.Item key={"item-" + i} label={choice} >{nbVotes}</Descriptions.Item>
           )
           })}
       </Descriptions>

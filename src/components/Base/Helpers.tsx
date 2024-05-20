@@ -18,7 +18,6 @@ export type RoundDisplayIdType =
 
 export function getPreviousRoundDid(roundDid: RoundDisplayIdType) : typeof RoundDisplayIds[number] | ""  {
   const ix = RoundDisplayIds.findIndex(el => el === roundDid);
-  console.log("ix", ix)
   return ix > 0 ? RoundDisplayIds[ix-1] : ""
 }
 
@@ -50,7 +49,6 @@ export const competitor2CandidateDid = (competitorDid: string) : string => {
     return parts[1];
   }
   else {
-    console.log("competitorDid, parts", competitorDid, parts)
     throw new Error("ITC ERROR [competitor2CandidateDid]: something wrong!!")
   }
 }

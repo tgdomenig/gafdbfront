@@ -54,6 +54,7 @@ export function parseShortPostBodyParagraph(paragraph: string): ShortPostBlock[]
 
   let modifier: ShortPostModifier, newPar = true;
   for (var line of lines) {
+    console.log(line);
     if (line) { // ignore empty lines
       if (line.startsWith("b:")) {
         modifier = "b";
@@ -61,13 +62,13 @@ export function parseShortPostBodyParagraph(paragraph: string): ShortPostBlock[]
       }
       else if (line.startsWith("vl:")) {
         modifier = "vl";
-        parseVideoLink(line.substring(3).trim());
-        line = _getJSONReady(line.substring(3).trim(), ['platform', 'videoId', 'startTimeInSeconds']);
+        line = parseVideoLink(line.substring(3).trim());
+//        line = _getJSONReady(line.substring(3).trim(), ['platform', 'videoId', 'startTimeInSeconds']);
       }
       else if (line.startsWith("wl:")) {
         modifier = "wl";
-        parseWebLink(line.substring(3).trim())
-        line = _getJSONReady(line.substring(3).trim(), ['label', 'url']);
+        line = parseWebLink(line.substring(3).trim())
+//        line = _getJSONReady(line.substring(3).trim(), ['label', 'url']);
       }
       else {
         modifier = "txt";
@@ -88,11 +89,12 @@ export function parseShortPostBody(text: string): ShortPostBlock[] {
 
   for (var paragraph of paragraphs) {
     if (paragraph) {
-      result = result.concat(parseShortPostBodyParagraph(paragraph));
+      const parsedParagraph = parseShortPostBodyParagraph(paragraph);
+      console.log("parsedParagraph", parsedParagraph)
+      result = result.concat(parsedParagraph);
+      console.log("result", result)
     }
   }
-
-//  console.log("RESULT: ", xx, yy)
   return result;
 }
 
@@ -122,7 +124,7 @@ function parseVideoLink(s: string) {
   else if (! Number.isInteger(startTimeInSeconds) ) {
       throw new Error(`while parsing video link ${s}: start must be an integer`)
   }
-  return {videoId, startTimeInSeconds}
+  return JSON.stringify({videoId, startTimeInSeconds})
 }
 
 function parseWebLink(s: string) {
@@ -142,7 +144,7 @@ function parseWebLink(s: string) {
   else if (! isValidUrl(url)) {
     throw new Error(`while parsing web link: ${s}: not a valid url: ${url}`)
   }
-  return {label, url}
+  return JSON.stringify({label, url})
 }
 
 function isValidUrl(urlString: string) {
