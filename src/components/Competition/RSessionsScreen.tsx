@@ -6,6 +6,7 @@ import { fGetDsSessions } from "../../data/Datastore/ModelsCommon/Session/Sessio
 import { ESession } from "../Forms/RSessionForm";
 import { RSession } from "./RSession";
 import { Card } from "antd";
+import { PageTitle } from "../Base/Base";
 
 
 export function RSessionsScreen() {
@@ -29,6 +30,8 @@ export function RSessionsScreen() {
 
   return(
     <div>
+            <PageTitle title="Sessions" />
+
       <SelectRound onChange={(round) => { setCurrentRoundDid(round); }} />
 
       <Card title="Note" bordered={false} size="small" style={{marginBottom: 20}}>

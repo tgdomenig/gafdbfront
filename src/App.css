@@ -86,3 +86,9 @@
   display: flex;
   justify-content: space-between;
 }
+
+.warning-card {
+  .ant-card-meta-avatar {color: red; font-size: 40px;}
+  .ant-card-meta-title {color: red}
+  .ant-card-meta-description {color: red; font-weight: bold;}
+}

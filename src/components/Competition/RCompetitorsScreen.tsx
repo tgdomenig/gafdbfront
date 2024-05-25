@@ -8,7 +8,7 @@ import { SelectRound } from "./Base";
 import { RListOfStrings } from "../BasicRendering/RStrings";
 import { RIconButton } from "../Base/Buttons";
 import { MyBox } from "../Base/MyBox";
-import { SubTitle } from "../Base/Base";
+import { PageTitle, SubTitle } from "../Base/Base";
 import { getDSChosenPieces } from "../../data/Datastore/ModelsCommon/MusicPiece/MusicPieceR";
 import { getDsPerformances } from "../../data/Datastore/ModelsCommon/Performance/PerformanceR";
 import { getDsMission } from "../../data/Datastore/ModelsCommon/Mission/MissionR";
@@ -94,7 +94,9 @@ export function RCompetitorsScreen() {
   }
 
   return(
-    <div>
+      <div>
+        <PageTitle title="Competitors" />
+
       <SelectRound onChange={(round) => { setCurrentRoundDid(round); setEditMode(false); }} />
 
       <Card title="Note" bordered={false} size="small" style={{marginBottom: 20}}>

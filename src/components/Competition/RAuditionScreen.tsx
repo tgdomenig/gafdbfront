@@ -16,6 +16,7 @@ import { MyBox } from "../Base/MyBox";
 import { VideoCameraOutlined } from "@ant-design/icons";
 import { RVideoLinks } from "./RVideoLinks";
 import { RStagedPerformance } from "../BasicRendering/RenderPerformance";
+import { PageTitle } from "../Base/Base";
 
 export function RAuditionScreen() {
   const lg = ENGLISH;
@@ -48,6 +49,8 @@ export function RAuditionScreen() {
 
   return(
     <div>
+      <PageTitle title="Auditions" />
+
       <SelectRound onChange={(round) => { setCurrentRoundDid(round) }} />
 
       {currentRoundDid && competitors.length > 0

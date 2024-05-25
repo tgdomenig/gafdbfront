@@ -14,3 +14,10 @@ Bemerkung
 ---------
 Datastore gibt zunächst die Meldung "DataStore - Schema is not initialized. DataStore will not function as expected. This could happen if you have multiple versions of DataStore installed."
 Diese Meldung verschwindet und Datastore startet korrekt, wenn bspw. in App.tsx eine get-Funktion aufgerufen wird (z.B. findDsGenericItems("Country"))
+
+
+
+deploy
+------
+npm run deploy
+gh-pages -d build

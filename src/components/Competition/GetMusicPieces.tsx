@@ -48,6 +48,39 @@ function getRepertoireDids(concoursRoundId: RoundDisplayIdType): string[] {
   
 }
 
+const OptionalWorks = 
+[
+  "Christophe Bertrand: Ha\u00efku",
+  "Thomas Ad\u00e8s: Darknesse Visible",
+  "Fr\u00e9d\u00e9ric Chopin: Scherzo n. 3 op. 39",
+  "Frederich Gulda: Prelude and Fugue",
+  "Claude Debussy: Pour le piano, L 95 - III. Toccata",
+  "Franz Liszt: Soir\u00e9es de Vienne (Valses-Caprices d'apr\u00e8s Franz Schubert) S.427 No.6",
+  "Igor Stravinsky / Guido Agosti: Firebird suite (Dance Infernal, Berceuse et Finale)",
+  "Peter Tchaikovsky: Nocturne cis-moll op.19 N4",
+  "Robert Schumann: Arabeske op.18",
+  "Franz Schubert: Allegretto in c minor D 915",
+  "Igor Stravinsky / Guido Agosti: Infernal dance from The Firebird",
+  "Alban Berg: Sonata B minor Op. 1",
+  "Johannes Brahms: Intermezzo No.3 op. 117",
+  "Alexander Scriabin: Piano sonata no.4 op. 30 in F sharp major",
+  "Gy\u00f6rgy Ligeti: Etude no. 4 \"Fanfares\"",
+  "Alexander Scriabin: Vers la flamme, op. 72",
+  "Alexander Scriabin: Valse in A-flat major, op. 38",
+  "Goffredo Petrassi: Toccata",
+  "Domenico Scarlatti: Sonata K. 513 \"Pastorale\"; in C Major",
+  "Fr\u00e9d\u00e9ric Chopin: Souvenir de Paganini op. posth B.37",
+  "Fr\u00e9d\u00e9ric Chopin: Barcarolle op. 60",
+  "Franz Liszt: Wiegenlied, S.198",
+  "Komitas Vardapet: Garun A",
+  "Ludwig van Beethoven: Rondo in C dur, op. 51 no. 1",
+  "Igor Stravinsky: \"The Shrovetide fair\" from \"Three movements from Petrushka\"",
+  "Dmitri Shostakovich: Prelude and fugue op. 87 No.15, in D-flat Major",
+  "Franz Liszt: Les jeux d'eau a la villa d'Este",
+  "Domenico Scarlatti: Sonata in F Major, K. 438",
+  "Felix Mendelssohn Bartholdy: Scherzo from the \u201cMidsummer night\u2019s dream\u201d (arr. Rachmaninoff)",
+  "Fr\u00e9d\u00e9ric Chopin: Nocturno in B major, op. 62 No. 1"
+]
 
 const RepertoireDidLookup = {
   "Concours 2024: Round One":
@@ -162,7 +195,8 @@ const RepertoireDidLookup = {
     "Maurice Ravel: M. 19",
     "Maurice Ravel: M. 61",
     "B\u00e9la Bart\u00f3k: Op. 8c (Sz 47 / BB 55)",
-    "B\u00e9la Bart\u00f3k: Op. 14 (Sz 62 / BB 70)"
+    "B\u00e9la Bart\u00f3k: Op. 14 (Sz 62 / BB 70)",
+    ...OptionalWorks
   ],
   "Concours 2024: Round Three":
   [

@@ -53,7 +53,11 @@ export default function RestrictedAdmin({children}: MyProps) {
 
   if (isAuthenticated) {
     return(
-      <div>{children}</div>
+      <div>
+        <div style={{position: 'absolute', top: '100px', right: '20px'}}>You are signed in</div>
+
+        <div>{children}</div>
+      </div>
     );
   }
   else {

@@ -13,6 +13,11 @@ import { xUpdate } from "../../data/Datastore/ModelsWeb/Base/xUpdate";
 import { addMinutes, formatISO } from "date-fns";
 
 import { Lambda } from "@aws-sdk/client-lambda";
+import { Card } from "antd";
+import { WarningFilled, WarningOutlined } from "@ant-design/icons";
+import Meta from "antd/es/card/Meta";
+
+import '../../App.css'
 
 const _DISPLAY_ID_ = "Voting Publikumspreis 2024";
 
@@ -65,9 +70,22 @@ export function VotingScreen() {
     <div>
       <PageTitle title="Voting" />
 
+        <Card className="warning-card"
+          style={{marginBottom: 20, color: 'red', textEmphasisColor: 'red'}}
+      >
+        <Meta
+                  style={{color: 'blue', textEmphasisColor: 'blue'}}
+      avatar={<WarningOutlined />}
+      title="Note"
+      description={"Start and end time of the voting are defined in GMT time, i.e. current Zurich time minus 2 hours!"}
+    />
+
+      </Card>
+
+
+
       {voting ? <VotingTimeWindowEditor voting={voting} onSubmitTimeWindow={onSubmitTimeWindow} /> : <div />}
 
-      
       {voting ? <RVotingStats voting={voting} /> : <div />}
 
     </div>
