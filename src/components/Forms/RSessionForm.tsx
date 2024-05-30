@@ -53,7 +53,9 @@ export function RSessionForm({roundDid, session, eligibleCompetitors, onSubmit, 
         />
 
         <TimeFnsPicker format="HH:mm" minuteStep={5} defaultValue={currentSession.start} placeholder="Von"
-          onChange={(t: Date) => setCurrentSession({...currentSession, start: t})}        
+          onChange={(t: Date) => {
+            console.log("t", t);
+            setCurrentSession({...currentSession, start: t})}}        
         />
     
         <TimeFnsPicker format="HH:mm" minuteStep={5} defaultValue={currentSession.end} placeholder="Bis"
@@ -78,7 +80,6 @@ export function RSessionForm({roundDid, session, eligibleCompetitors, onSubmit, 
           data={currentSession} 
           onSubmit={onSubmit}
           onCancel={onCancel}
-          disabled={currentSession.competitors.length === 0}
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           renderData={(sn: ESession) => <RenderESession session={sn} />}

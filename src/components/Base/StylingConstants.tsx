@@ -11,3 +11,5 @@ export const Styling = {
 }
 
 export const IS_LIVE = true;
+
+export const SIMULATION_MODE = false;

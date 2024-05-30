@@ -8,7 +8,6 @@ import { EditSession } from "./EditSession";
 import { RIconButton } from "../Base/Buttons";
 import { xSaveOrUpdate } from "../../data/Datastore/ModelsWeb/Base/xSaveOrUpdate";
 import { getDsSession } from "../../data/Datastore/ModelsCommon/Session/SessionR";
-import { DataStore } from "@aws-amplify/datastore";
 import { DsSession } from "../../models";
 import { SessionInit } from "../../data/Datastore/ModelsWeb/Session/InitTypes";
 import { format } from "date-fns";
@@ -27,26 +26,31 @@ export function RSession({roundDid, session, onDbSave}: {roundDid: RoundDisplayI
 
   const updateSession = async (session: ESession) => {
 
-    const {id, date, start, end} = session;
+    const {id, displayId, date, start, end} = session;
     const sessionInit : SessionInit = {
       sessionName: "", // not used anymore
       date: format(date, "yyyy-MM-dd"),
-      start: format(start, "hh:mm:ss"),
-      end: format(end, "hh:mm:ss"),
+      start: format(start, "HH:mm:ss"),
+      end: format(end, "HH:mm:ss"),
       concoursRoundDisplayId: roundDid,
       competitors: session.competitors // SIND DAS DIE RICHTIGEN DISPLAY-IDS? !!!!!!
     }
 
+    console.log("sessionInit", JSON.stringify(sessionInit))
+
     // Note: Sessions have a displayId (which is actually not used anymore). The displayId is created in saveSession and therefore missing in SessionInit.
     // Here, as a hack, we add the displayId to the interface to be able to use xSaveOrUpdate
 
-    await xSaveOrUpdate<SessionInit & {displayId: string}, DsSession>(
+    const saved = await xSaveOrUpdate<SessionInit & {displayId: string}, DsSession>(
       getDsSession,
       DsSession.copyOf,
       saveSession,
-      session.id,
-      {...sessionInit, displayId: ""}
+      id,
+      {...sessionInit, displayId}
     );
+
+    console.log("saved", JSON.stringify(saved))
+
     onDbSave();
   }
 
@@ -71,7 +75,10 @@ export type SessionInit = {
       <EditSession 
           roundDid={roundDid}
           session={session}
-          onSubmit={ (sn: ESession) => { updateSession(sn); setEditMode(false) } } // SAVE SESSION HERE !!!!!!
+          onSubmit={ (sn: ESession) => { 
+            console.log("SESSION: ", sn)
+            
+            updateSession(sn); setEditMode(false) } } // SAVE SESSION HERE !!!!!!
           onCancel={ () => { setEditMode(false) } }
       />
     );

@@ -10,6 +10,7 @@ import { xDelete } from "../../data/Datastore/ModelsWeb/Base/xDelete";
 import { DsPerformanceInit, saveDsPerformace, savePerformance } from "../../data/Datastore/ModelsWeb/Performance/PerformanceCUD";
 import { itcAssert } from "../../util/common/general/tests";
 import { xSaveOrUpdate } from "../../data/Datastore/ModelsWeb/Base/xSaveOrUpdate";
+import { SIMULATION_MODE } from "../Base/StylingConstants";
 
 /**
  * Auswahl der aktuellen Runde
@@ -98,7 +99,13 @@ async function dbUpdatePerformances(competitor: DsParticipation, chosenPieces: E
   // Delete performances which are no longer chosen
   for (var dsPerformance of dsPerformances) {
     if (! chosenPieces.find(chosenPiece => chosenPiece.musicPiece && chosenPiece.musicPiece.id === dsPerformance.musicPieceId)) {
-      await xDelete(getDsPerformance, dsPerformance.id);
+      if (SIMULATION_MODE) {
+        const perf = await getDsPerformance(dsPerformance.id);
+        console.log("SIMULATION: Deleting Performance: ", JSON.stringify(perf));
+      }
+      else {
+        await xDelete(getDsPerformance, dsPerformance.id);
+      }
     }
   }
   
@@ -122,15 +129,21 @@ async function dbUpdatePerformances(competitor: DsParticipation, chosenPieces: E
 
  
   return await filteredMapAsync<DsPerformanceInit, DsPerformance>(async (input: DsPerformanceInit) => {
-      // @ts-ignore
-      await xSaveOrUpdate<DsPerformanceInit, DsPerformance>(
-        getDsPerformance,
-        DsPerformance.copyOf,
-        saveDsPerformace,
-        input.id,
-        input,
-        input.displayId
-      );
+      if (SIMULATION_MODE) {
+        console.log("SIMULATION: Saving Performance: ", JSON.stringify(input));
+      }
+      else {
+
+        // @ts-ignore
+        await xSaveOrUpdate<DsPerformanceInit, DsPerformance>(
+          getDsPerformance,
+          DsPerformance.copyOf,
+          saveDsPerformace,
+          input.id,
+          input,
+          input.displayId
+        );
+      }
     },
     filterNull(result)
   );

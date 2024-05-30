@@ -12,9 +12,8 @@ import { VotingInit } from "../../data/Datastore/ModelsWeb/Voting/InitTypes";
 import { xUpdate } from "../../data/Datastore/ModelsWeb/Base/xUpdate";
 import { addMinutes, formatISO } from "date-fns";
 
-import { Lambda } from "@aws-sdk/client-lambda";
 import { Card } from "antd";
-import { WarningFilled, WarningOutlined } from "@ant-design/icons";
+import { WarningOutlined } from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 
 import '../../App.css'
@@ -47,7 +46,6 @@ export function VotingScreen() {
   const onSubmitTimeWindow = async (starts: Date, durationInMinutes: number) => {
 
     if (voting) {
-      const endDateTime = addMinutes(starts, durationInMinutes);
 
       const updated = await xUpdate<VotingInit, DsVoting>(
         getDsVoting,
@@ -77,7 +75,7 @@ export function VotingScreen() {
                   style={{color: 'blue', textEmphasisColor: 'blue'}}
       avatar={<WarningOutlined />}
       title="Note"
-      description={"Start and end time of the voting are defined in GMT time, i.e. current Zurich time minus 2 hours!"}
+      description={"Specify start and end time in Zurich summer time, i.e. GMT plus 2 hours!"}
     />
 
       </Card>

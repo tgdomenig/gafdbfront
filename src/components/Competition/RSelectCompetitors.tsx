@@ -69,7 +69,6 @@ export function RSelectCompetitors({round, competitors, onSubmit, onCancel}: RSe
                 data={selection} 
                 onSubmit={onSubmit}
                 onCancel={onCancel}
-                disabled={selection.length === 0}
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 renderData={(missionIds: string[]) => 

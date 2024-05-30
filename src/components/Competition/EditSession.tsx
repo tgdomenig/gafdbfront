@@ -20,6 +20,8 @@ type RSessionEditorProps = {
 }
 export function EditSession({roundDid, session, onSubmit, onCancel}: RSessionEditorProps) {
 
+  console.log("session:", session)
+
   const [competitors, setCompetitors] = useState<DsParticipation[]>([]);
 
   useEffect(() => {

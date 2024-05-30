@@ -15,7 +15,7 @@ import { getDsMission } from "../../data/Datastore/ModelsCommon/Mission/MissionR
 import { saveDsParticipation } from "../../data/Datastore/ModelsWeb/Participation/ParticipationCUD";
 import { getDsSessions } from "../../data/Datastore/ModelsCommon/Session/SessionR";
 import { xDelete } from "../../data/Datastore/ModelsWeb/Base/xDelete";
-import { IS_LIVE } from "../Base/StylingConstants";
+import { SIMULATION_MODE, IS_LIVE } from "../Base/StylingConstants";
 import { Card } from "antd";
 
 export function RCompetitorsScreen() {
@@ -68,7 +68,13 @@ export function RCompetitorsScreen() {
             }
           }
 
-          await xDelete(getDsParticipation, competitor.id);
+          if (SIMULATION_MODE) {
+            console.log("SIMULATION: Delete Participation: ", competitor.id)
+          }
+          else {
+            await xDelete(getDsParticipation, competitor.id);
+          }
+
         }
       }
 
@@ -77,7 +83,15 @@ export function RCompetitorsScreen() {
         if (! competitors.find(c => c.missionId === missionId)) {
           const dsMission = await getDsMission(missionId);
           if (dsMission && currentRound) {
-            await saveDsParticipation(dsMission, currentRound);
+            if (SIMULATION_MODE) {
+              console.log("SIMULATION: Saving Participation: ", JSON.stringify({
+                dsMission,
+                currentRound
+              }));
+            }
+            else {
+              await saveDsParticipation(dsMission, currentRound);
+            }
           }
           else {
             throw new Error("Something went wrong, could not add some of the competitors")

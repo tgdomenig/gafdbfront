@@ -56,6 +56,11 @@ export function RSessionsScreen() {
 function stageSession(dsSession: DsSession) : ESession {
   const {id, sessionName, displayId, date, start, end, competitors} = dsSession;
 
+  /*
+  Beachte: date ist AWSDate (d.h. ohne Zeit), und start und end sind AWSTime (d.h. ohne Datum).
+  Beachte auch Date-Konstruktor: wenn nur aus Datum, so wird UTC-Zeit genommen mit Zeit = 00:00:00, wenn Datum und Zeit Local time vom Device, s. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+  */
+
   return {
     id,
     displayId,

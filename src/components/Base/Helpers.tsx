@@ -59,10 +59,10 @@ export const getCandidateName = (candidateDid: string) : string => {
 }
 
 export const toDateStr = (date: string | Date | null | undefined) => 
-  date ? (typeof date === 'string') ? date : format(date, 'dd.MM.yyyy') : ""
+  date ? (typeof date === 'string') ? date : format(date, 'dd.MM.yyyy') : "";
 
-export const toTimeStr = (date: string | Date | null | undefined) => 
-  date ? (typeof date === 'string') ? date : format(date, 'hh:mm') : ""
+export const toTimeStr = (date: string | Date | null | undefined) =>
+  date ? (typeof date === 'string') ? date : format(date, 'HH:mm') : "";
 
 export const todayAt = (hour: number) : Date => {
   const today = new Date()
