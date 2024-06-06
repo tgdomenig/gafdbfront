@@ -3,6 +3,9 @@ import React, { useState, useEffect, useContext} from 'react';
 import { Hub } from 'aws-amplify/utils'
 import '@azure/core-asynciterator-polyfill'
 import { Context } from '../../util/dbFront/Context';
+import { useOnlineStatus } from './NetInfo';
+import { Flex, Tag, Typography } from 'antd';
+import { CheckCircleOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 // will be set before Datastore.start; similar to example application "multitenant" (LoadAuth)
 // READ https://aws.amazon.com/blogs/mobile/new-in-amplify-datastore-selective-sync-and-sort-functionality/
@@ -15,7 +18,9 @@ type MyProps = {
 
 
 export default function HasDatastore({children}: MyProps) : JSX.Element {
+
   const {setDatastoreSynced} = useContext(Context);
+  const isOnline = useOnlineStatus();
 
   /* --------------- Main context variables --------------- */
 
@@ -25,25 +30,23 @@ export default function HasDatastore({children}: MyProps) : JSX.Element {
 
   useEffect(() => {
 
-    console.log("INSTALLING DATASTORE LISTENERS");
-
     const datastoreListener = Hub.listen('datastore', async hubData => {
       const  { event, data } = hubData.payload;
-      // console.log("=========================== HUB has DATASTORE EVENT: ===========================");
-      // console.log(event);
-      // console.log(data);
       switch (event) {
         case "syncQueriesStarted": {
+          console.log("syncQueriesStarted", false);
           setDatastoreSynced(false);
           setIsSynced(false);
           break;
         }
         case "syncQueriesReady": {
+          console.log("syncQueriesReady", true);
           setDatastoreSynced(true);
           setIsSynced(true);
           break;
         }
         case "ready": {
+          console.log("everything ready", true);
           setDatastoreSynced(true);
           setIsSynced(true);
           break;
@@ -64,15 +67,52 @@ export default function HasDatastore({children}: MyProps) : JSX.Element {
       datastoreListener();
       authListener();
     });
-  }, [])
+  }, [isOnline])
 
-  return(<>{children}</>);
-
-  if (isSynced) {
-    return(<>{children}</>);
-  }
-  else {
-    return(<div>DATASTORE NOT READY</div>);
-  }
+  return(
+    <>
+      <StatusBar />
+      {children}
+    </>
+  );
 }
 
+function StatusBar() {
+
+  const isOnline = useOnlineStatus();
+  const {isAuthenticated, datastoreSynced} = useContext(Context);
+  
+
+  const tagStyle = {fontSize: 16, padding: '4px 8px'};
+  const colorOk = "green";
+  const colorNok = "red";
+
+  return(
+    <Flex gap="8px 8px" style={{position: 'absolute', top: '100px', right: '20px'}}>
+      {isAuthenticated
+        ? <Tag icon={<CheckCircleOutlined />} color={colorOk} style={tagStyle}>
+            You are signed in
+          </Tag>
+        : <Tag icon={<ExclamationCircleOutlined />} color={colorNok} style={tagStyle}>
+            You are NOT signed in
+          </Tag>
+      }
+      {isOnline
+        ? <Tag icon={<CheckCircleOutlined />} color={colorOk} style={tagStyle}>
+            The browser is online
+          </Tag>
+        : <Tag icon={<ExclamationCircleOutlined />} color={colorNok} style={tagStyle}>
+            The browser is offline
+          </Tag>
+      }
+      {datastoreSynced
+        ? <Tag icon={<CheckCircleOutlined />} color={colorOk} style={tagStyle}>
+            AWS DataStore is synced
+          </Tag>
+        : <Tag icon={<ExclamationCircleOutlined />} color={colorNok} style={tagStyle}>
+            AWS DataStore is NOT synced
+          </Tag>
+      }
+    </Flex>
+  )
+}

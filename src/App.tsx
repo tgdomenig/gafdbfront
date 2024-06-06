@@ -10,10 +10,15 @@ import './App.css';
 // import './AppConfig.css';
 import RestrictedAdmin from './components/Base/RestrictedAdmin';
 import { Styling } from './components/Base/StylingConstants';
+import { Context } from './util/dbFront/Context';
+import { useState } from 'react';
 
 Amplify.configure(awsconfig);
 
 function App() {
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [datastoreSynced, setDatastoreSynced] = useState(false);
 
   const { Header, Footer, Content } = Layout;
 //  const {datastoreSynced} = useContext(Context)
@@ -42,6 +47,13 @@ function App() {
         },
       }}
     >
+      <Context.Provider value={{
+          isAuthenticated,
+          setIsAuthenticated,
+          datastoreSynced,
+          setDatastoreSynced
+      }}
+      >
       <Router>
         <Layout>
         <Header className="header">
@@ -59,6 +71,7 @@ function App() {
         <Footer />
       </Layout>
     </Router>
+    </Context.Provider>
     </ConfigProvider>
   );
 }

@@ -32,6 +32,11 @@ export function VotingTimeWindowEditor({voting, onSubmitTimeWindow}: VotingTimeW
     <div style={{marginBottom: 20}}>
 
       {voting
+        ? <SubSubTitle title={voting.displayId} />
+        : <div />
+      }
+
+      {voting
         ? <RVotingTimeWindow voting={voting} />
         : <div />
       }

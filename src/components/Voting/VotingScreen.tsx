@@ -26,13 +26,17 @@ type VoteStats = {
 }
 
 export function VotingScreen() {
+  return <VotingScreenHelper displayId={_DISPLAY_ID_} />
+}
+
+export function VotingScreenHelper({displayId}: {displayId: string}) {
 
   const [voting, setVoting] = useState<Voting|undefined>(undefined);
 
   useEffect(() => {
     const load = async () => {
 
-      const voting = await xGetStaged<DsVoting, Voting>(ENGLISH, fGetDsVoting, _DISPLAY_ID_, stageVoting);
+      const voting = await xGetStaged<DsVoting, Voting>(ENGLISH, fGetDsVoting, displayId, stageVoting);
 
       if (voting) {
         setVoting(voting);

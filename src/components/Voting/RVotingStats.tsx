@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Descriptions } from "antd";
 import { Voting } from "../../data/Datastore/ModelsCommon/Voting/Types";
 import { getAllVotes } from "../../data/Datastore/ModelsWeb/Vote/VoteR";
@@ -16,28 +16,6 @@ export function RVotingStats({voting}: {voting: Voting}) {
     if (voting) {
       const actualVotes = await getAllVotes(voting.id);
   
-      const actualVotesfake = [
-        {choice: "A"},
-        {choice: "B"},
-        {choice: "A"},
-        {choice: "B"},
-        {choice: "A"},
-        {choice: "C"},
-        {choice: "A"},
-        {choice: "A"},
-        {choice: "C"},
-        {choice: "A"},
-        {choice: "A"},
-        {choice: "C"},
-        {choice: "D"},
-        {choice: "D"},
-        {choice: "C"},
-        {choice: "A"},
-        {choice: "A"},
-        {choice: "C"},
-        {choice: "C"}
-      ];
-
       const newStats = new Map<string, number>();
       for (var {choice} of actualVotes) {
         if (choice) {

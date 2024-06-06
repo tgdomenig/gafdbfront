@@ -1,7 +1,8 @@
 import { signIn, type SignInInput, getCurrentUser } from 'aws-amplify/auth';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button, Input } from 'antd';
+import { Context } from '../../util/dbFront/Context';
 
 // NEW NEW NEW NEW: https://docs.amplify.aws/react/build-a-backend/auth/enable-sign-up/#sign-in
 
@@ -13,7 +14,10 @@ type MyProps = {
 
 
 export default function RestrictedAdmin({children}: MyProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const {setIsAuthenticated} = useContext(Context);
+
+  const [authenticated, setAuthenticated] = useState(false);
   const [triggerAuthCheck, setTriggerAuthCheck] = useState(false);
 
   async function handleSignIn({ username, password }: SignInInput) {
@@ -39,11 +43,13 @@ export default function RestrictedAdmin({children}: MyProps) {
       console.log(`signInDetails: ${signInDetails}`);
 
       setIsAuthenticated(true);
+      setAuthenticated(true);
     }
     catch (e) {
       console.log(`ITC: USER NOT AUTHENTICATED`);
 
       setIsAuthenticated(false);
+      setAuthenticated(false);
     }
   }
 
@@ -51,10 +57,10 @@ export default function RestrictedAdmin({children}: MyProps) {
     checkAuth();
   }, [triggerAuthCheck]);
 
-  if (isAuthenticated) {
+  if (authenticated) {
     return(
       <div>
-        <div style={{position: 'absolute', top: '100px', right: '20px'}}>You are signed in</div>
+        {/* <div style={{position: 'absolute', top: '100px', right: '20px'}}>You are signed in</div> */}
 
         <div>{children}</div>
       </div>

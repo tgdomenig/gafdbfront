@@ -9,6 +9,7 @@ import { RCompetitorsScreen } from '../Competition/RCompetitorsScreen';
 import { RSessionsScreen } from '../Competition/RSessionsScreen';
 import { RAuditionScreen } from '../Competition/RAuditionScreen';
 import { EditConcoursConfig } from '../ConcoursConfig/ConcoursConfigAlt';
+import { TestVotingScreen } from '../Voting/TestVotingScreen';
 
 
 export function NavigationMenu() {
@@ -21,6 +22,7 @@ return(
   <Menu.Item key="sessions"><Link to="/sessions">Sessions</Link></Menu.Item>
   <Menu.Item key="auditions"><Link to="/auditions">Recitals</Link></Menu.Item>
   <Menu.Item key="voting"><Link to="/voting">Voting</Link></Menu.Item>
+  <Menu.Item key="test-voting"><Link to="/test-voting">Test Voting</Link></Menu.Item>
 </Menu>
 
 );
@@ -35,6 +37,7 @@ return(
     <Route path="/sessions" Component={RSessionsScreen} />
     <Route path="/auditions" Component={RAuditionScreen} />
     <Route path="/voting" Component={VotingScreen} />
+    <Route path="/test-voting" Component={TestVotingScreen} />
   </Routes>
 );
 }
