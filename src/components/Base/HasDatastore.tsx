@@ -105,7 +105,7 @@ function StatusBar() {
             The browser is offline
           </Tag>
       }
-      {datastoreSynced
+      {isOnline && datastoreSynced
         ? <Tag icon={<CheckCircleOutlined />} color={colorOk} style={tagStyle}>
             AWS DataStore is synced
           </Tag>
